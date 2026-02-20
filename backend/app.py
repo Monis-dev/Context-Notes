@@ -3,25 +3,27 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import urlparse
 from authlib.integrations.flask_client import OAuth
 from flask_cors import CORS
-from urllib.parse import urlparse
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "prod_secret_123")
 
+# DB Config
 uri = os.getenv("DATABASE_URL", "sqlite:///local.db")
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = uri
-app.config['SQALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-CORS(app, supports_credentials=True)
+# CORS is critical for the extension to talk to the server
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
+
 db = SQLAlchemy(app)
 oauth = OAuth(app)
 
+# --- Models ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -37,12 +39,13 @@ class Website(db.Model):
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    selection = db.Column(db.Text) # Highlighted text
+    selection = db.Column(db.Text) 
     website_id = db.Column(db.Integer, db.ForeignKey('website.id'), nullable=False)
 
 with app.app_context():
     db.create_all()
 
+# --- Auth ---
 google = oauth.register(
     name='google',
     client_id=os.getenv("CLIENT_ID"),
@@ -67,33 +70,38 @@ def authorize():
         db.session.commit()
     session['user_id'] = user.id
     session['user_email'] = user.email
+    session.permanent = True # Keep session alive
     return redirect("/dashboard")
+
+@app.route('/api/me') # Renamed from /user_info to fix 404
+def get_me():
+    if 'user_id' in session:
+        return jsonify({'email': session['user_email'], 'id': session['user_id']})
+    return jsonify({"error": "Not logged in"}), 401
 
 @app.route('/logout')
 def logout():
-    session.pop("user_email", None)
+    session.clear()
     return redirect("/")
 
-@app.route('/user_info')
-def user_info():
-    if 'user_id' in session:
-        return jsonify({'email': session['user_email']})
-    return jsonify({"error": "Not logged in"}), 401
-
+# --- API ---
 @app.route('/api/notes', methods=['POST'])
 def add_note():
     if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
     data = request.json
     user_id = session['user_id']
+    
     site = Website.query.filter_by(url=data['url'], user_id=user_id).first()
     if not site:
         site = Website(url=data['url'], domain=urlparse(data['url']).netloc, user_id=user_id)
         db.session.add(site)
         db.session.commit()
+    
     new_note = Note(content=data['content'], selection=data.get('selection'), website_id=site.id)
     db.session.add(new_note)
     db.session.commit()
-    return jsonify({"message": "Saved"}), 201
+    # Return the real ID so the extension can update its local storage
+    return jsonify({"message": "Saved", "id": new_note.id}), 201
 
 @app.route('/api/notes', methods=['GET'])
 def get_notes():
@@ -109,17 +117,28 @@ def get_notes():
         })
     return jsonify(result)
 
+@app.route('/api/notes/<int:id>', methods=['PUT'])
+def update_note(id):
+    if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
+    note = db.session.get(Note, id)
+    if note and note.website.user_id == session['user_id']:
+        note.content = request.json.get('content', note.content)
+        db.session.commit()
+        return jsonify({"message": "Updated"})
+    return jsonify({"error": "Unauthorized"}), 403
+
 @app.route('/api/notes/<int:id>', methods=['DELETE'])
 def delete_note(id):
+    if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
     note = db.session.get(Note, id)
     if note and note.website.user_id == session['user_id']:
         db.session.delete(note)
         db.session.commit()
         return '', 204
-    return '', 403
+    return jsonify({"error": "Unauthorized"}), 403
 
 @app.route('/dashboard')
-def server_dashborad():
+def server_dashboard():
     return render_template("dashboard.html")
 
 if __name__ == '__main__':
