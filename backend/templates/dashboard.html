@@ -58,23 +58,19 @@
         flex-shrink: 0;
         border-right: 1px solid var(--border);
         height: 100%;
-        transition: width 0.3s cubic-bezier(0.16,1,0.3,1);
       }
 
-      /* hamburger */
       .hamburger {
         width: 34px; height: 34px;
         border-radius: 8px;
         border: 1.5px solid var(--border);
         background: transparent;
         cursor: pointer;
-        display: grid;
-        place-items: center;
+        display: grid; place-items: center;
         flex-shrink: 0;
         transition: background 0.15s, border-color 0.15s;
       }
       .hamburger:hover { background: var(--accent-bg); border-color: var(--accent); }
-
       .hicon { display: flex; flex-direction: column; gap: 4px; }
       .hicon span {
         display: block; height: 2px; border-radius: 2px;
@@ -85,8 +81,6 @@
       .hicon span:nth-child(1) { width: 16px; }
       .hicon span:nth-child(2) { width: 11px; }
       .hicon span:nth-child(3) { width: 14px; }
-
-      /* X state */
       .hamburger.is-open .hicon span:nth-child(1) { width: 16px; transform: translateY(6px) rotate(45deg); }
       .hamburger.is-open .hicon span:nth-child(2) { opacity: 0; transform: scaleX(0); }
       .hamburger.is-open .hicon span:nth-child(3) { width: 16px; transform: translateY(-6px) rotate(-45deg); }
@@ -95,11 +89,9 @@
         width: 32px; height: 32px;
         background: linear-gradient(135deg, #6366f1, #4f46e5);
         border-radius: 8px;
-        display: grid; place-items: center;
-        flex-shrink: 0;
+        display: grid; place-items: center; flex-shrink: 0;
       }
       .logo-icon svg { width: 17px; height: 17px; fill: white; }
-
       .logo-name { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; white-space: nowrap; }
       .logo-name span { color: var(--accent); }
 
@@ -110,12 +102,11 @@
         position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
         width: 15px; height: 15px;
         stroke: var(--muted-2); fill: none; stroke-width: 2;
-        stroke-linecap: round; stroke-linejoin: round;
-        pointer-events: none;
+        stroke-linecap: round; stroke-linejoin: round; pointer-events: none;
       }
       .search-box input {
         width: 100%; height: 37px;
-        padding: 0 14px 0 38px;
+        padding: 0 32px 0 38px;
         border: 1.5px solid var(--border); border-radius: 9px;
         font-family: inherit; font-size: 13.5px;
         color: var(--ink); background: var(--bg); outline: none;
@@ -127,31 +118,61 @@
         box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
         background: #fff;
       }
-
-      /* clear search btn */
       .search-clear {
         position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
         display: none; background: none; border: none; cursor: pointer;
-        color: var(--muted-2); font-size: 16px; line-height: 1;
-        padding: 2px 4px;
+        color: var(--muted-2); font-size: 17px; line-height: 1; padding: 2px 4px;
       }
       .search-clear:hover { color: var(--ink); }
       .search-clear.visible { display: block; }
 
+      /* cloud sync */
+      .sync-wrap { position: relative; flex-shrink: 0; }
+      .sync-btn {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 7px 13px;
+        font-size: 13px; font-weight: 600;
+        color: var(--ink-2); cursor: pointer;
+        display: flex; align-items: center; gap: 7px;
+        transition: all 0.2s; font-family: inherit;
+      }
+      .sync-btn:hover { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+      .sync-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+      .sync-menu {
+        position: absolute; top: calc(100% + 8px); right: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 10px; width: 220px;
+        display: none; flex-direction: column;
+        padding: 8px; z-index: 300;
+        animation: fadeDown 0.18s ease;
+      }
+      @keyframes fadeDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+      .sync-menu.show { display: flex; }
+      #userStatus { font-size: 11px; color: var(--muted); padding: 4px 8px 6px; }
+      .sync-divider { height: 1px; background: var(--border); margin: 4px 0; }
+      .sync-item {
+        padding: 9px 10px; border-radius: 6px;
+        cursor: pointer; font-size: 13px;
+        display: flex; align-items: center; gap: 8px;
+        color: var(--ink); transition: background 0.12s;
+      }
+      .sync-item:hover { background: var(--bg); }
+
       /* ── APP BODY ── */
       .app-body { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-      /* overlay */
       .sidebar-overlay {
-        display: none;
-        position: fixed; inset: 0; top: var(--topbar-h);
-        background: rgba(16,24,40,0.3);
-        z-index: 80;
-        backdrop-filter: blur(2px);
-        animation: fadein 0.2s ease;
+        display: none; position: fixed; inset: 0; top: var(--topbar-h);
+        background: rgba(16,24,40,0.3); z-index: 80;
+        backdrop-filter: blur(2px); animation: fadein 0.2s ease;
       }
       .sidebar-overlay.visible { display: block; }
-      @keyframes fadein { from { opacity:0 } to { opacity:1 } }
+      @keyframes fadein { from { opacity:0; } to { opacity:1; } }
 
       /* ── SIDEBAR ── */
       .sidebar {
@@ -160,8 +181,7 @@
         border-right: 1px solid var(--border);
         display: flex; flex-direction: column;
         flex-shrink: 0; overflow: hidden;
-        transition: width 0.3s cubic-bezier(0.16,1,0.3,1),
-                    border-color 0.3s;
+        transition: width 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
         z-index: 90;
       }
       .sidebar.collapsed { width: 0; border-right-color: transparent; }
@@ -175,10 +195,8 @@
       .sidebar-meta {
         font-size: 11.5px; color: var(--muted);
         padding: 0 8px 10px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 4px;
+        border-bottom: 1px solid var(--border); margin-bottom: 4px;
       }
-
       .sidebar-scroll { flex: 1; overflow-y: auto; padding: 4px 8px 20px; }
       .sidebar-scroll::-webkit-scrollbar { width: 3px; }
       .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -187,16 +205,13 @@
         display: flex; align-items: center; gap: 9px;
         padding: 8px 10px; border-radius: 8px;
         cursor: pointer; margin-bottom: 1px;
-        text-decoration: none;
-        transition: background 0.15s;
-        border: none; outline: none;
+        text-decoration: none; transition: background 0.15s;
       }
       .nav-item:hover { background: var(--bg); }
       .nav-item.active { background: var(--active-nav); }
       .nav-item.active .nav-dot { background: var(--accent); }
       .nav-item.active .nav-domain { color: var(--accent); font-weight: 600; }
       .nav-item.active .nav-badge { background: var(--accent); color: #fff; border-color: var(--accent); }
-
       .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; transition: background 0.15s; }
       .nav-item:hover .nav-dot { background: var(--accent); }
       .nav-domain { font-size: 13px; font-weight: 500; color: var(--ink-2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -216,27 +231,14 @@
       .main-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
       .main-sub strong { color: var(--ink-2); }
 
-      /* no results */
       .no-results { display: none; text-align: center; padding: 60px 20px; color: var(--muted); }
       .no-results.show { display: block; }
       .no-results h3 { font-size: 15px; color: var(--ink-2); margin-bottom: 6px; }
 
-      /* site section */
       .site-section { margin-bottom: 40px; animation: fadeUp 0.4s ease both; }
-      .site-section:nth-child(1) { animation-delay: 0.05s; }
-      .site-section:nth-child(2) { animation-delay: 0.12s; }
-      .site-section:nth-child(3) { animation-delay: 0.19s; }
-      .site-section:nth-child(4) { animation-delay: 0.26s; }
-      .site-section:nth-child(5) { animation-delay: 0.33s; }
-      @keyframes fadeUp {
-        from { opacity:0; transform:translateY(14px); }
-        to   { opacity:1; transform:translateY(0); }
-      }
+      @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 
-      .section-head {
-        display: flex; align-items: center; gap: 10px;
-        margin-bottom: 14px;
-      }
+      .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
       .section-globe {
         width: 30px; height: 30px; border-radius: 8px;
         background: var(--accent-bg); display: grid; place-items: center; flex-shrink: 0;
@@ -245,18 +247,16 @@
       .section-domain { font-size: 14.5px; font-weight: 700; color: var(--ink); }
       .section-link {
         font-size: 11.5px; color: var(--muted); text-decoration: none;
-        display: inline-flex; align-items: center; gap: 3px;
-        transition: color 0.15s;
+        display: inline-flex; align-items: center; gap: 3px; transition: color 0.15s;
       }
       .section-link:hover { color: var(--accent); }
       .section-count {
-        margin-left: auto;
-        font-size: 11.5px; color: var(--muted);
+        margin-left: auto; font-size: 11.5px; color: var(--muted);
         background: var(--bg); border: 1px solid var(--border);
         border-radius: 20px; padding: 2px 9px;
       }
 
-      /* ── NOTES ROW ── */
+      /* notes row */
       .notes-grid {
         display: flex; gap: 14px;
         overflow-x: auto; overflow-y: visible;
@@ -269,7 +269,7 @@
       .notes-grid::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
       .notes-grid::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-      /* ── NOTE CARD ── */
+      /* note card */
       .note-card {
         background: var(--surface);
         border: 1.5px solid var(--border);
@@ -277,8 +277,7 @@
         padding: 16px;
         min-width: 280px; max-width: 280px;
         display: flex; flex-direction: column; gap: 10px;
-        flex-shrink: 0;
-        scroll-snap-align: start;
+        flex-shrink: 0; scroll-snap-align: start;
         position: relative;
         transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
       }
@@ -288,70 +287,59 @@
         transform: translateY(-2px);
       }
 
-      /* card action buttons (edit / delete) */
       .card-actions {
         position: absolute; top: 12px; right: 12px;
         display: flex; gap: 4px;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.2s;
+        opacity: 0; pointer-events: none; transition: opacity 0.2s;
       }
       .note-card:hover .card-actions { opacity: 1; pointer-events: auto; }
-
       .action-btn {
         width: 26px; height: 26px; border-radius: 6px;
         border: 1px solid var(--border); background: var(--bg);
-        display: grid; place-items: center;
-        cursor: pointer; font-size: 13px; color: var(--muted);
+        display: grid; place-items: center; cursor: pointer; color: var(--muted);
         transition: all 0.15s;
       }
       .action-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
       .action-btn.del:hover { border-color: #ef4444; color: #ef4444; background: #fff5f5; }
 
-      .note-title {
-        font-size: 13.5px; font-weight: 700; color: var(--ink);
-        line-height: 1.4; padding-right: 60px;
-      }
-
+      .note-title { font-size: 13.5px; font-weight: 700; color: var(--ink); line-height: 1.4; padding-right: 60px; }
       .note-highlight-block {
         font-family: "Lora", serif; font-style: italic;
         font-size: 12px; color: #92400e;
         background: var(--highlight-bg);
         border-left: 3px solid var(--highlight-border);
-        padding: 7px 10px; border-radius: 0 6px 6px 0;
-        line-height: 1.55;
+        padding: 7px 10px; border-radius: 0 6px 6px 0; line-height: 1.55;
       }
-
       .note-body { font-size: 13px; color: var(--ink-2); line-height: 1.6; flex: 1; }
-
       .note-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; }
       .tag {
-        font-size: 10.5px; font-weight: 600;
-        padding: 2px 9px; border-radius: 20px;
-        background: var(--bg); color: var(--muted);
+        font-size: 10.5px; font-weight: 600; padding: 2px 9px;
+        border-radius: 20px; background: var(--bg); color: var(--muted);
         border: 1px solid var(--border);
       }
 
-      /* divider */
       .divider { height: 1px; background: var(--border); margin: 32px 0; }
 
-      /* empty state */
+      /* skeleton */
+      .skel { background: var(--border); border-radius: 8px; animation: shimmer 1.2s infinite; }
+      @keyframes shimmer { 0%,100%{opacity:1;} 50%{opacity:0.45;} }
+
+      /* empty */
       .empty-state {
         display: flex; flex-direction: column;
         align-items: center; justify-content: center;
-        gap: 10px; padding: 80px 40px; color: var(--muted);
-        text-align: center;
+        gap: 10px; padding: 80px 40px;
+        color: var(--muted); text-align: center;
       }
       .empty-icon { font-size: 40px; opacity: 0.3; }
       .empty-state h3 { font-size: 16px; color: var(--ink-2); font-weight: 600; }
       .empty-state p { font-size: 13px; }
 
-      /* ── MODAL ── */
+      /* modal */
       .modal-bg {
         display: none; position: fixed; inset: 0;
         background: rgba(16,24,40,0.45); z-index: 200;
-        place-items: center;
-        backdrop-filter: blur(3px);
-        animation: fadein 0.2s ease;
+        place-items: center; backdrop-filter: blur(3px);
       }
       .modal-bg.show { display: grid; }
       .modal {
@@ -360,10 +348,7 @@
         box-shadow: 0 20px 60px rgba(16,24,40,0.18);
         animation: slideUp 0.25s cubic-bezier(0.16,1,0.3,1);
       }
-      @keyframes slideUp {
-        from { opacity:0; transform:translateY(20px); }
-        to   { opacity:1; transform:translateY(0); }
-      }
+      @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
       .modal h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
       .modal textarea {
         width: 100%; min-height: 100px; resize: vertical;
@@ -377,8 +362,8 @@
       .btn {
         padding: 8px 18px; border-radius: 8px; font-family: inherit;
         font-size: 13px; font-weight: 600; cursor: pointer;
-        border: 1.5px solid var(--border); background: var(--bg);
-        color: var(--ink-2); transition: all 0.15s;
+        border: 1.5px solid var(--border); background: var(--bg); color: var(--ink-2);
+        transition: all 0.15s;
       }
       .btn:hover { background: var(--border); }
       .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -392,8 +377,7 @@
         font-size: 13px; font-weight: 500;
         opacity: 0; pointer-events: none;
         transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-        z-index: 300;
-        white-space: nowrap;
+        z-index: 400; white-space: nowrap;
       }
       .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -401,13 +385,12 @@
       @media (max-width: 768px) {
         .sidebar {
           position: fixed; left: 0; top: var(--topbar-h); bottom: 0;
-          z-index: 90;
-          transform: translateX(0);
-          width: var(--nav-width) !important;
+          z-index: 90; width: var(--nav-width) !important;
           transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
         }
         .sidebar.collapsed { transform: translateX(-100%); border-right-color: var(--border) !important; }
         .main { padding: 20px 16px; }
+        .sync-btn span { display: none; }
       }
     </style>
   </head>
@@ -434,12 +417,26 @@
         <div class="search-box">
           <svg class="s-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <input type="text" id="searchInput" placeholder="Search notes…" autocomplete="off" />
-          <button class="search-clear" id="searchClear" title="Clear search">×</button>
+          <button class="search-clear" id="searchClear" title="Clear">×</button>
+        </div>
+      </div>
+
+      <div class="sync-wrap">
+        <button class="sync-btn" id="syncBtn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Cloud Sync</span>
+        </button>
+        <div class="sync-menu" id="syncMenu">
+          <div id="userStatus">Checking auth…</div>
+          <div class="sync-divider"></div>
+          <div class="sync-item" onclick="window.location.href='/login'">🔑 Login with Google</div>
+          <div class="sync-divider"></div>
+          <div class="sync-item" onclick="pushToCloud()">⬆ Upload Local Data</div>
+          <div class="sync-item" onclick="pullFromCloud()">⬇ Download Data</div>
         </div>
       </div>
     </header>
 
-    <!-- overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="app-body">
@@ -448,104 +445,33 @@
       <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <span class="sidebar-label">Sources</span>
-          <div class="sidebar-meta" id="sidebarMeta">—</div>
+          <div class="sidebar-meta" id="sidebarMeta">Loading…</div>
         </div>
-        <div class="sidebar-scroll" id="sidebarNav">
-          {% if websites %}
-            {% for site in websites %}
-            <a class="nav-item{% if loop.first %} active{% endif %}"
-               href="#site-{{ loop.index }}"
-               data-target="site-{{ loop.index }}">
-              <div class="nav-dot"></div>
-              <span class="nav-domain" title="{{ site.domain }}">{{ site.domain }}</span>
-              <span class="nav-badge">{{ site.notes | length }}</span>
-            </a>
-            {% endfor %}
-          {% else %}
-            <p style="padding:12px;font-size:13px;color:var(--muted)">No sources yet.</p>
-          {% endif %}
-        </div>
+        <div class="sidebar-scroll" id="sidebarNav"></div>
       </nav>
 
       <!-- MAIN -->
       <main class="main" id="mainContent">
-        {% if websites %}
-
-          <div class="main-heading">Your Notes</div>
-          <div class="main-sub"><strong id="noteCount">0</strong> notes found</div>
-
-          <div class="no-results" id="noResults">
-            <h3>No notes match "<span id="noResultsQuery"></span>"</h3>
-            <p>Try a different search term.</p>
-          </div>
-
-          {% for site in websites %}
-          <div class="site-section" id="site-{{ loop.index }}" data-domain="{{ site.domain }}">
-            <div class="section-head">
-              <div class="section-globe">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              </div>
-              <span class="section-domain">{{ site.domain }}</span>
-              <a href="{{ site.url }}" target="_blank" class="section-link" rel="noopener">
-                <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                  <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                </svg>
-                Visit page
-              </a>
-              <span class="section-count">{{ site.notes | length }} note{{ 's' if (site.notes | length) != 1 }}</span>
+        <!-- skeleton -->
+        <div id="skeleton">
+          <div class="skel" style="height:26px;width:160px;margin-bottom:8px;"></div>
+          <div class="skel" style="height:16px;width:100px;margin-bottom:28px;animation-delay:0.1s;"></div>
+          <div style="margin-bottom:36px;">
+            <div class="skel" style="height:28px;width:200px;margin-bottom:14px;animation-delay:0.15s;"></div>
+            <div style="display:flex;gap:14px;">
+              <div class="skel" style="min-width:280px;height:150px;animation-delay:0.2s;"></div>
+              <div class="skel" style="min-width:280px;height:150px;animation-delay:0.3s;"></div>
+              <div class="skel" style="min-width:280px;height:150px;animation-delay:0.4s;"></div>
             </div>
-
-            <div class="notes-grid">
-              {% for note in site.notes %}
-              <div class="note-card"
-                   data-id="{{ note.id }}"
-                   data-title="{{ note.content | lower }}">
-
-                <!-- action buttons -->
-                <div class="card-actions">
-                  <button class="action-btn edit" title="Edit note"
-                    onclick="openEdit({{ note.id }}, this.closest('.note-card').querySelector('.note-body').textContent.trim())">
-                    <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                  </button>
-                  <button class="action-btn del" title="Delete note"
-                    onclick="deleteNote({{ note.id }}, this.closest('.note-card'))">
-                    <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                    </svg>
-                  </button>
-                </div>
-
-                <div class="note-title">{{ note.content | truncate(55) }}</div>
-
-                {% if note.text_selection %}
-                <div class="note-highlight-block">"{{ note.text_selection }}"</div>
-                {% endif %}
-
-                <div class="note-body">{{ note.content }}</div>
-
-                <div class="note-tags">
-                  <span class="tag">{{ site.domain | truncate(22, true, '…') }}</span>
-                </div>
-              </div>
-              {% endfor %}
+          </div>
+          <div>
+            <div class="skel" style="height:28px;width:180px;margin-bottom:14px;animation-delay:0.25s;"></div>
+            <div style="display:flex;gap:14px;">
+              <div class="skel" style="min-width:280px;height:150px;animation-delay:0.35s;"></div>
+              <div class="skel" style="min-width:280px;height:150px;animation-delay:0.45s;"></div>
             </div>
-
-            {% if not loop.last %}<div class="divider"></div>{% endif %}
           </div>
-          {% endfor %}
-
-        {% else %}
-          <div class="empty-state">
-            <div class="empty-icon">📝</div>
-            <h3>No notes yet</h3>
-            <p>Use the ContextNote extension to save notes from any webpage.</p>
-          </div>
-        {% endif %}
+        </div>
       </main>
     </div>
 
@@ -561,190 +487,328 @@
       </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
     <script>
       /* ─── refs ─── */
-      const sidebar      = document.getElementById('sidebar');
       const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const sidebar      = document.getElementById('sidebar');
       const overlay      = document.getElementById('sidebarOverlay');
-      const mainEl       = document.getElementById('mainContent');
+      const sidebarNav   = document.getElementById('sidebarNav');
+      const sidebarMeta  = document.getElementById('sidebarMeta');
+      const mainContent  = document.getElementById('mainContent');
+      const skeleton     = document.getElementById('skeleton');
       const searchInput  = document.getElementById('searchInput');
       const searchClear  = document.getElementById('searchClear');
-      const noResults    = document.getElementById('noResults');
-      const noResultsQ   = document.getElementById('noResultsQuery');
-      const noteCountEl  = document.getElementById('noteCount');
-      const sidebarMeta  = document.getElementById('sidebarMeta');
-      const navItems     = document.querySelectorAll('.nav-item[data-target]');
-      const sections     = document.querySelectorAll('.site-section');
-      const toastEl      = document.getElementById('toast');
+      const syncBtn      = document.getElementById('syncBtn');
+      const syncMenu     = document.getElementById('syncMenu');
       const editModal    = document.getElementById('editModal');
       const editTextarea = document.getElementById('editTextarea');
+      const toastEl      = document.getElementById('toast');
 
-      let editNoteId     = null;
-      let toastTimer     = null;
-
-      /* ─── counts ─── */
-      const totalNotes = document.querySelectorAll('.note-card').length;
-      if (noteCountEl) noteCountEl.textContent = totalNotes;
-      if (sidebarMeta) sidebarMeta.textContent = sections.length + ' site' + (sections.length !== 1 ? 's' : '') + ' · ' + totalNotes + ' notes';
+      let editNoteId  = null;
+      let toastTimer  = null;
+      let allWebsites = [];
 
       /* ─── toast ─── */
-      function showToast(msg, duration = 2500) {
+      function showToast(msg, ms = 2600) {
         toastEl.textContent = msg;
         toastEl.classList.add('show');
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toastEl.classList.remove('show'), duration);
+        toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms);
       }
 
       /* ─── hamburger ─── */
-      function isMobile() { return window.innerWidth <= 768; }
+      const isMobile = () => window.innerWidth <= 768;
 
       function openSidebar() {
         sidebar.classList.remove('collapsed');
         hamburgerBtn.classList.add('is-open');
         if (isMobile()) overlay.classList.add('visible');
       }
-
       function closeSidebar() {
         sidebar.classList.add('collapsed');
         hamburgerBtn.classList.remove('is-open');
         overlay.classList.remove('visible');
       }
 
-      hamburgerBtn.addEventListener('click', () => {
-        sidebar.classList.contains('collapsed') ? openSidebar() : closeSidebar();
-      });
-
+      hamburgerBtn.addEventListener('click', () =>
+        sidebar.classList.contains('collapsed') ? openSidebar() : closeSidebar()
+      );
       overlay.addEventListener('click', closeSidebar);
 
-      /* close sidebar on mobile when nav item clicked */
-      navItems.forEach(item => {
-        item.addEventListener('click', e => {
-          e.preventDefault();
-          const target = document.getElementById(item.dataset.target);
-          if (target) mainEl.scrollTo({ top: target.offsetTop - 24, behavior: 'smooth' });
-          navItems.forEach(n => n.classList.remove('active'));
-          item.classList.add('active');
-          if (isMobile()) closeSidebar();
-        });
+      /* ─── sync dropdown ─── */
+      syncBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        syncMenu.classList.toggle('show');
+      });
+      document.addEventListener('click', e => {
+        if (!syncMenu.contains(e.target) && e.target !== syncBtn)
+          syncMenu.classList.remove('show');
       });
 
-      /* ─── active nav on scroll ─── */
-      mainEl.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(sec => {
-          if (mainEl.scrollTop + 100 >= sec.offsetTop) current = sec.id;
-        });
-        if (current) {
-          navItems.forEach(n => n.classList.toggle('active', n.dataset.target === current));
+      async function pushToCloud() {
+        syncMenu.classList.remove('show');
+        showToast('Uploading…');
+        try {
+          const res = await fetch('/api/sync/push', { method: 'POST' });
+          showToast(res.ok ? 'Uploaded successfully ✓' : 'Upload failed');
+        } catch { showToast('Network error'); }
+      }
+
+      async function pullFromCloud() {
+        syncMenu.classList.remove('show');
+        showToast('Downloading…');
+        try {
+          const res = await fetch('/api/sync/pull', { method: 'POST' });
+          if (res.ok) { showToast('Downloaded successfully ✓'); loadFromServer(); }
+          else showToast('Download failed');
+        } catch { showToast('Network error'); }
+      }
+
+      /* ─── LOAD FROM SERVER ─── */
+      async function loadFromServer() {
+        try {
+          const res = await fetch('/api/notes');
+          if (res.status === 401) { window.location.href = '/login'; return; }
+          allWebsites = await res.json();
+          renderDashboard(allWebsites);
+          checkAuth();
+        } catch {
+          if (skeleton) skeleton.remove();
+          mainContent.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">⚠️</div>
+              <h3>Could not load notes</h3>
+              <p>Make sure the server is running and try again.</p>
+            </div>`;
         }
-      });
+      }
 
-      /* ─── search ─── */
-      function runSearch(q) {
-        let visible = 0;
+      async function checkAuth() {
+        try {
+          const res = await fetch('/api/me');
+          const el = document.getElementById('userStatus');
+          if (res.ok) {
+            const d = await res.json();
+            el.textContent = '✓ Signed in as ' + (d.email || d.name || 'User');
+          } else {
+            el.textContent = 'Not signed in';
+          }
+        } catch { /* silent */ }
+      }
+
+      /* ─── RENDER DASHBOARD ─── */
+      function esc(s) {
+        return String(s)
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function noteCardHTML(note, domain) {
+        const body   = note.content || '';
+        const title  = body.length > 55 ? body.slice(0,55) + '…' : body;
+        const sel    = note.selection || note.text_selection || '';
+        const hiBlock = sel
+          ? `<div class="note-highlight-block">"${esc(sel)}"</div>`
+          : '';
+        return `
+          <div class="note-card" data-id="${note.id}" data-title="${esc(body.toLowerCase())}">
+            <div class="card-actions">
+              <button class="action-btn edit" title="Edit"
+                onclick="openEdit(${note.id}, this.closest('.note-card').querySelector('.note-body').textContent.trim())">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button class="action-btn del" title="Delete"
+                onclick="deleteNote(${note.id}, this.closest('.note-card'))">
+                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6"/><path d="M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+              </button>
+            </div>
+            <div class="note-title">${esc(title)}</div>
+            ${hiBlock}
+            <div class="note-body">${esc(body)}</div>
+            <div class="note-tags"><span class="tag">${esc(domain.slice(0,22))}</span></div>
+          </div>`;
+      }
+
+      function renderDashboard(websites) {
+        if (skeleton) skeleton.remove();
+
+        const totalNotes = websites.reduce((s, w) => s + w.notes.length, 0);
+
+        /* sidebar */
+        sidebarMeta.textContent = websites.length + ' site' + (websites.length !== 1 ? 's' : '') + ' · ' + totalNotes + ' notes';
+        sidebarNav.innerHTML = websites.length
+          ? websites.map((site, i) => `
+              <a class="nav-item${i === 0 ? ' active' : ''}" href="#site-${i}" data-target="site-${i}">
+                <div class="nav-dot"></div>
+                <span class="nav-domain" title="${esc(site.domain)}">${esc(site.domain)}</span>
+                <span class="nav-badge">${site.notes.length}</span>
+              </a>`).join('')
+          : '<p style="padding:12px;font-size:13px;color:var(--muted)">No sources yet.</p>';
+
+        /* main */
+        if (!websites.length) {
+          mainContent.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <h3>No notes yet</h3>
+              <p>Use the ContextNote extension to save notes from any webpage.</p>
+            </div>`;
+          return;
+        }
+
+        mainContent.innerHTML = `
+          <div class="main-heading">Your Notes</div>
+          <div class="main-sub"><strong id="noteCount">${totalNotes}</strong> notes found</div>
+          <div class="no-results" id="noResults">
+            <h3>No notes match "<span id="noResultsQuery"></span>"</h3>
+            <p>Try a different search term.</p>
+          </div>
+          ${websites.map((site, i) => `
+          <div class="site-section" id="site-${i}" data-domain="${esc(site.domain)}">
+            <div class="section-head">
+              <div class="section-globe">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <span class="section-domain">${esc(site.domain)}</span>
+              <a href="${esc(site.url)}" target="_blank" rel="noopener" class="section-link">
+                <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Visit page
+              </a>
+              <span class="section-count">${site.notes.length} note${site.notes.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="notes-grid">
+              ${site.notes.map(n => noteCardHTML(n, site.domain)).join('')}
+            </div>
+            ${i < websites.length - 1 ? '<div class="divider"></div>' : ''}
+          </div>`).join('')}`;
+
+        bindNavigation();
+        bindSearch();
+      }
+
+      /* ─── NAVIGATION ─── */
+      function bindNavigation() {
+        const navItems = document.querySelectorAll('.nav-item[data-target]');
+        const sections = document.querySelectorAll('.site-section');
+
+        navItems.forEach(item => {
+          item.addEventListener('click', e => {
+            e.preventDefault();
+            const target = document.getElementById(item.dataset.target);
+            if (target) mainContent.scrollTo({ top: target.offsetTop - 24, behavior: 'smooth' });
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+            if (isMobile()) closeSidebar();
+          });
+        });
+
+        mainContent.addEventListener('scroll', () => {
+          let current = '';
+          sections.forEach(sec => {
+            if (mainContent.scrollTop + 100 >= sec.offsetTop) current = sec.id;
+          });
+          if (current) navItems.forEach(n => n.classList.toggle('active', n.dataset.target === current));
+        });
+      }
+
+      /* ─── SEARCH ─── */
+      function bindSearch() {
+        searchInput.addEventListener('input', runSearch);
+        searchClear.addEventListener('click', () => {
+          searchInput.value = ''; runSearch(); searchInput.focus();
+        });
+      }
+
+      function runSearch() {
+        const q = searchInput.value.trim().toLowerCase();
+        searchClear.classList.toggle('visible', q.length > 0);
+        const sections  = document.querySelectorAll('.site-section');
+        const noResultsEl = document.getElementById('noResults');
+        const noteCountEl = document.getElementById('noteCount');
+        let totalVisible = 0;
+
         sections.forEach(sec => {
           let secVisible = 0;
           sec.querySelectorAll('.note-card').forEach(card => {
-            const match = !q || card.dataset.title.includes(q);
+            const match = !q || (card.dataset.title || '').includes(q);
             card.style.display = match ? '' : 'none';
             if (match) secVisible++;
           });
           sec.style.display = secVisible > 0 ? '' : 'none';
-          if (secVisible > 0) visible++;
+          totalVisible += secVisible;
         });
 
-        const empty = visible === 0 && q.length > 0;
-        noResults.classList.toggle('show', empty);
-        if (noResultsQ) noResultsQ.textContent = q;
-
-        /* update count */
-        const shown = document.querySelectorAll('.note-card:not([style*="none"])').length;
-        if (noteCountEl) noteCountEl.textContent = q ? shown : totalNotes;
-
-        searchClear.classList.toggle('visible', q.length > 0);
+        if (noResultsEl) noResultsEl.classList.toggle('show', totalVisible === 0 && q.length > 0);
+        const qEl = document.getElementById('noResultsQuery');
+        if (qEl) qEl.textContent = q;
+        const total = allWebsites.reduce((s, w) => s + w.notes.length, 0);
+        if (noteCountEl) noteCountEl.textContent = q ? totalVisible : total;
       }
 
-      searchInput.addEventListener('input', () => runSearch(searchInput.value.trim().toLowerCase()));
-
-      searchClear.addEventListener('click', () => {
-        searchInput.value = '';
-        runSearch('');
-        searchInput.focus();
-      });
-
-      /* ─── delete note ─── */
+      /* ─── DELETE ─── */
       async function deleteNote(id, cardEl) {
         if (!confirm('Delete this note?')) return;
         try {
-          const res = await fetch(`/notes/${id}`, { method: 'DELETE' });
+          const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
           if (res.ok) {
             cardEl.style.transition = 'opacity 0.3s, transform 0.3s';
             cardEl.style.opacity = '0';
             cardEl.style.transform = 'scale(0.92)';
-            setTimeout(() => {
-              cardEl.remove();
-              showToast('Note deleted');
-            }, 300);
-          } else {
-            showToast('Failed to delete note');
-          }
-        } catch (e) {
-          showToast('Network error');
-        }
+            setTimeout(() => { cardEl.remove(); showToast('Note deleted'); }, 300);
+          } else showToast('Failed to delete note');
+        } catch { showToast('Network error'); }
       }
 
-      /* ─── edit note ─── */
+      /* ─── EDIT ─── */
       function openEdit(id, content) {
         editNoteId = id;
         editTextarea.value = content;
         editModal.classList.add('show');
         setTimeout(() => editTextarea.focus(), 50);
       }
-
-      function closeEdit() {
-        editModal.classList.remove('show');
-        editNoteId = null;
-      }
+      function closeEdit() { editModal.classList.remove('show'); editNoteId = null; }
 
       document.getElementById('cancelEdit').addEventListener('click', closeEdit);
-
-      /* close modal on bg click */
       editModal.addEventListener('click', e => { if (e.target === editModal) closeEdit(); });
-
-      /* close modal on Escape */
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && editModal.classList.contains('show')) closeEdit(); });
 
       document.getElementById('saveEdit').addEventListener('click', async () => {
         const newContent = editTextarea.value.trim();
         if (!newContent) { showToast('Note cannot be empty'); return; }
-
         try {
-          const res = await fetch(`/notes/${editNoteId}`, {
+          const res = await fetch(`/api/notes/${editNoteId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: newContent }),
           });
-
           if (res.ok) {
-            /* update card in-place without reload */
             const card = document.querySelector(`.note-card[data-id="${editNoteId}"]`);
             if (card) {
-              card.querySelector('.note-title').textContent = newContent.length > 55 ? newContent.slice(0, 55) + '…' : newContent;
+              card.querySelector('.note-title').textContent = newContent.length > 55 ? newContent.slice(0,55) + '…' : newContent;
               card.querySelector('.note-body').textContent  = newContent;
               card.dataset.title = newContent.toLowerCase();
             }
             closeEdit();
             showToast('Note updated ✓');
-          } else {
-            showToast('Failed to save changes');
-          }
-        } catch (e) {
-          showToast('Network error');
-        }
+          } else showToast('Failed to save changes');
+        } catch { showToast('Network error'); }
       });
+
+      /* ─── BOOT ─── */
+      window.addEventListener('load', loadFromServer);
     </script>
   </body>
 </html>
