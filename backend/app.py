@@ -38,8 +38,9 @@ class Website(db.Model):
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    selection = db.Column(db.Text) 
+    title = db.Column(db.String(255), nullable=False, default="Untitled") # ADDED: Title/Heading
+    content = db.Column(db.Text, nullable=True) # The Description
+    selection = db.Column(db.Text) # The Highlighted Text
     website_id = db.Column(db.Integer, db.ForeignKey('website.id'), nullable=False)
 
 with app.app_context():
@@ -73,7 +74,7 @@ def authorize():
     session.permanent = True # Keep session alive
     return redirect("/dashboard")
 
-@app.route('/api/me') # Renamed from /user_info to fix 404
+@app.route('/api/me') 
 def get_me():
     if 'user_id' in session:
         return jsonify({'email': session['user_email'], 'id': session['user_id']})
@@ -97,10 +98,14 @@ def add_note():
         db.session.add(site)
         db.session.commit()
     
-    new_note = Note(content=data['content'], selection=data.get('selection'), website_id=site.id)
+    # ADDED: Extract title and content distinctly
+    title = data.get('title', 'Untitled Note')
+    content = data.get('content', '')
+    selection = data.get('selection', None)
+
+    new_note = Note(title=title, content=content, selection=selection, website_id=site.id)
     db.session.add(new_note)
     db.session.commit()
-    # Return the real ID so the extension can update its local storage
     return jsonify({"message": "Saved", "id": new_note.id}), 201
 
 @app.route('/api/notes', methods=['GET'])
@@ -113,7 +118,8 @@ def get_notes():
         result.append({
             "domain": s.domain,
             "url": s.url,
-            "notes": [{"id": n.id, "content": n.content, "selection": n.selection} for n in s.notes]
+            # ADDED: Return the title
+            "notes": [{"id": n.id, "title": n.title, "content": n.content, "selection": n.selection} for n in s.notes]
         })
     return jsonify(result)
 
@@ -122,6 +128,8 @@ def update_note(id):
     if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
     note = db.session.get(Note, id)
     if note and note.website.user_id == session['user_id']:
+        # ADDED: Allow updating both title and content
+        note.title = request.json.get('title', note.title)
         note.content = request.json.get('content', note.content)
         db.session.commit()
         return jsonify({"message": "Updated"})

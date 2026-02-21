@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ContextNote | My Dashboard</title>
+    <title>ContextNote | Dashboard</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital@1&display=swap"
       rel="stylesheet"
@@ -11,18 +11,17 @@
     <style>
       :root {
         --bg: #f6f7f9;
-        --surface: #fff;
-        --border: #e4e7ec;
-        --border-s: #d0d5dd;
+        --sur: #fff;
+        --bdr: #e4e7ec;
+        --bdrs: #d0d5dd;
         --ink: #101828;
         --ink2: #344054;
-        --muted: #667085;
-        --muted2: #98a2b3;
-        --accent: #4f46e5;
-        --accent-bg: #eef2ff;
-        --hi-bg: #fffbeb;
-        --hi-border: #f59e0b;
-        --r: 12px;
+        --mut: #667085;
+        --mut2: #98a2b3;
+        --acc: #4f46e5;
+        --acc-bg: #eef2ff;
+        --hbg: #fffbeb;
+        --hbdr: #f59e0b;
         --nav: 260px;
         --top: 60px;
       }
@@ -43,28 +42,28 @@
         overflow: hidden;
       }
 
-      /* topbar */
+      /* ── topbar ── */
       .topbar {
         height: var(--top);
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
+        background: var(--sur);
+        border-bottom: 1px solid var(--bdr);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         z-index: 100;
         padding-right: 20px;
       }
-      .topbar-logo {
+      .tl {
         width: var(--nav);
         display: flex;
         align-items: center;
         gap: 10px;
         padding: 0 16px;
         flex-shrink: 0;
-        border-right: 1px solid var(--border);
+        border-right: 1px solid var(--bdr);
         height: 100%;
       }
-      .logo-icon {
+      .logo {
         width: 32px;
         height: 32px;
         background: linear-gradient(135deg, #6366f1, #4f46e5);
@@ -73,19 +72,19 @@
         place-items: center;
         flex-shrink: 0;
       }
-      .logo-icon svg {
+      .logo svg {
         width: 17px;
         height: 17px;
         fill: #fff;
       }
-      .logo-name {
+      .lname {
         font-size: 15px;
         font-weight: 700;
         letter-spacing: -0.3px;
         white-space: nowrap;
       }
-      .logo-name span {
-        color: var(--accent);
+      .lname span {
+        color: var(--acc);
       }
 
       /* hamburger */
@@ -93,6 +92,9 @@
         width: 34px;
         height: 34px;
         border-radius: 8px;
+        border: 1.5px solid var(--bdr);
+        background: transparent;
+        cursor: pointer;
         display: grid;
         place-items: center;
         flex-shrink: 0;
@@ -101,15 +103,15 @@
           border-color 0.15s;
       }
       .hbtn:hover {
-        background: var(--accent-bg);
-        border-color: var(--accent);
+        background: var(--acc-bg);
+        border-color: var(--acc);
       }
-      .hicon {
+      .hico {
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
-      .hicon span {
+      .hico span {
         display: block;
         height: 2px;
         border-radius: 2px;
@@ -117,59 +119,57 @@
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         transform-origin: center;
       }
-      .hicon span:nth-child(1) {
+      .hico span:nth-child(1) {
         width: 16px;
       }
-      .hicon span:nth-child(2) {
+      .hico span:nth-child(2) {
         width: 11px;
       }
-      .hicon span:nth-child(3) {
+      .hico span:nth-child(3) {
         width: 14px;
       }
-      .hbtn.open .hicon span:nth-child(1) {
+      .hbtn.open .hico span:nth-child(1) {
         transform: translateY(6px) rotate(45deg);
-        width: 16px;
       }
-      .hbtn.open .hicon span:nth-child(2) {
+      .hbtn.open .hico span:nth-child(2) {
         opacity: 0;
         transform: scaleX(0);
       }
-      .hbtn.open .hicon span:nth-child(3) {
+      .hbtn.open .hico span:nth-child(3) {
         transform: translateY(-6px) rotate(-45deg);
-        width: 16px;
       }
 
       /* search */
-      .search-wrap {
+      .sw {
         flex: 1;
         padding: 0 20px;
         display: flex;
         align-items: center;
       }
-      .search-box {
+      .sb {
         width: 100%;
         max-width: 480px;
         position: relative;
       }
-      .search-box svg {
+      .sb svg {
         position: absolute;
         left: 12px;
         top: 50%;
         transform: translateY(-50%);
         width: 15px;
         height: 15px;
-        stroke: var(--muted2);
+        stroke: var(--mut2);
         fill: none;
         stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
         pointer-events: none;
       }
-      .search-box input {
+      .sb input {
         width: 100%;
         height: 37px;
         padding: 0 32px 0 38px;
-        border: 1.5px solid var(--border);
+        border: 1.5px solid var(--bdr);
         border-radius: 9px;
         font-family: inherit;
         font-size: 13.5px;
@@ -180,15 +180,15 @@
           border-color 0.2s,
           box-shadow 0.2s;
       }
-      .search-box input::placeholder {
-        color: var(--muted2);
+      .sb input::placeholder {
+        color: var(--mut2);
       }
-      .search-box input:focus {
-        border-color: var(--accent);
+      .sb input:focus {
+        border-color: var(--acc);
         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
         background: #fff;
       }
-      .s-clear {
+      .sc {
         position: absolute;
         right: 10px;
         top: 50%;
@@ -197,26 +197,26 @@
         background: none;
         border: none;
         cursor: pointer;
-        color: var(--muted2);
+        color: var(--mut2);
         font-size: 17px;
         line-height: 1;
         padding: 2px 4px;
       }
-      .s-clear:hover {
+      .sc:hover {
         color: var(--ink);
       }
-      .s-clear.on {
+      .sc.on {
         display: block;
       }
 
       /* sync */
-      .sync-wrap {
+      .synw {
         position: relative;
         flex-shrink: 0;
       }
-      .sync-btn {
-        background: var(--surface);
-        border: 1.5px solid var(--border);
+      .synbtn {
+        background: var(--sur);
+        border: 1.5px solid var(--bdr);
         border-radius: 8px;
         padding: 7px 13px;
         font-size: 13px;
@@ -229,12 +229,12 @@
         transition: all 0.2s;
         font-family: inherit;
       }
-      .sync-btn:hover {
-        border-color: var(--accent);
-        background: var(--accent-bg);
-        color: var(--accent);
+      .synbtn:hover {
+        border-color: var(--acc);
+        background: var(--acc-bg);
+        color: var(--acc);
       }
-      .sync-btn svg {
+      .synbtn svg {
         width: 14px;
         height: 14px;
         stroke: currentColor;
@@ -243,12 +243,12 @@
         stroke-linecap: round;
         stroke-linejoin: round;
       }
-      .sync-menu {
+      .synmenu {
         position: absolute;
         top: calc(100% + 8px);
         right: 0;
-        background: var(--surface);
-        border: 1px solid var(--border);
+        background: var(--sur);
+        border: 1px solid var(--bdr);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         border-radius: 10px;
         width: 220px;
@@ -268,20 +268,20 @@
           transform: translateY(0);
         }
       }
-      .sync-menu.on {
+      .synmenu.on {
         display: flex;
       }
-      #userStatus {
+      #uStatus {
         font-size: 11px;
-        color: var(--muted);
+        color: var(--mut);
         padding: 4px 8px 6px;
       }
-      .sync-div {
+      .sdiv {
         height: 1px;
-        background: var(--border);
+        background: var(--bdr);
         margin: 4px 0;
       }
-      .sync-item {
+      .sitem {
         padding: 9px 10px;
         border-radius: 6px;
         cursor: pointer;
@@ -292,18 +292,18 @@
         color: var(--ink);
         transition: background 0.12s;
       }
-      .sync-item:hover {
+      .sitem:hover {
         background: var(--bg);
       }
 
       /* layout */
-      .app-body {
+      .body {
         display: flex;
         flex: 1;
         overflow: hidden;
         position: relative;
       }
-      .overlay {
+      .ovl {
         display: none;
         position: fixed;
         inset: 0;
@@ -312,15 +312,15 @@
         z-index: 80;
         backdrop-filter: blur(2px);
       }
-      .overlay.on {
+      .ovl.on {
         display: block;
       }
 
       /* sidebar */
-      .sidebar {
+      .side {
         width: var(--nav);
-        background: var(--surface);
-        border-right: 1px solid var(--border);
+        background: var(--sur);
+        border-right: 1px solid var(--bdr);
         display: flex;
         flex-direction: column;
         flex-shrink: 0;
@@ -330,44 +330,44 @@
           border-color 0.3s;
         z-index: 90;
       }
-      .sidebar.closed {
+      .side.closed {
         width: 0;
         border-right-color: transparent;
       }
-      .sidebar-hd {
+      .shd {
         padding: 14px 14px 8px;
         flex-shrink: 0;
       }
-      .sidebar-label {
+      .slbl {
         font-size: 10.5px;
         font-weight: 600;
-        color: var(--muted2);
+        color: var(--mut2);
         text-transform: uppercase;
         letter-spacing: 0.09em;
         padding: 0 8px;
         margin-bottom: 6px;
         display: block;
       }
-      .sidebar-meta {
+      .smeta {
         font-size: 11.5px;
-        color: var(--muted);
+        color: var(--mut);
         padding: 0 8px 10px;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--bdr);
         margin-bottom: 4px;
       }
-      .sidebar-scroll {
+      .sscroll {
         flex: 1;
         overflow-y: auto;
         padding: 4px 8px 20px;
       }
-      .sidebar-scroll::-webkit-scrollbar {
+      .sscroll::-webkit-scrollbar {
         width: 3px;
       }
-      .sidebar-scroll::-webkit-scrollbar-thumb {
-        background: var(--border);
+      .sscroll::-webkit-scrollbar-thumb {
+        background: var(--bdr);
         border-radius: 3px;
       }
-      .nav-a {
+      .na {
         display: flex;
         align-items: center;
         gap: 9px;
@@ -378,36 +378,36 @@
         text-decoration: none;
         transition: background 0.15s;
       }
-      .nav-a:hover {
+      .na:hover {
         background: var(--bg);
       }
-      .nav-a.on {
-        background: var(--accent-bg);
+      .na.on {
+        background: var(--acc-bg);
       }
-      .nav-a.on .dot {
-        background: var(--accent);
+      .na.on .dot {
+        background: var(--acc);
       }
-      .nav-a.on .nav-d {
-        color: var(--accent);
+      .na.on .nd {
+        color: var(--acc);
         font-weight: 600;
       }
-      .nav-a.on .badge {
-        background: var(--accent);
+      .na.on .bdg {
+        background: var(--acc);
         color: #fff;
-        border-color: var(--accent);
+        border-color: var(--acc);
       }
       .dot {
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: var(--border-s);
+        background: var(--bdrs);
         flex-shrink: 0;
         transition: background 0.15s;
       }
-      .nav-a:hover .dot {
-        background: var(--accent);
+      .na:hover .dot {
+        background: var(--acc);
       }
-      .nav-d {
+      .nd {
         font-size: 13px;
         font-weight: 500;
         color: var(--ink2);
@@ -416,12 +416,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .badge {
+      .bdg {
         font-size: 10.5px;
         font-weight: 600;
-        color: var(--muted);
+        color: var(--mut);
         background: var(--bg);
-        border: 1px solid var(--border);
+        border: 1px solid var(--bdr);
         border-radius: 20px;
         padding: 1px 7px;
         flex-shrink: 0;
@@ -438,40 +438,40 @@
         width: 4px;
       }
       .main::-webkit-scrollbar-thumb {
-        background: var(--border);
+        background: var(--bdr);
         border-radius: 4px;
       }
-      .main-h {
+      .mh {
         font-size: 21px;
         font-weight: 700;
         letter-spacing: -0.3px;
         margin-bottom: 3px;
       }
-      .main-s {
+      .ms {
         font-size: 13px;
-        color: var(--muted);
+        color: var(--mut);
         margin-bottom: 28px;
       }
-      .main-s strong {
+      .ms strong {
         color: var(--ink2);
       }
-      .no-res {
+      .nores {
         display: none;
         text-align: center;
         padding: 60px 20px;
-        color: var(--muted);
+        color: var(--mut);
       }
-      .no-res.on {
+      .nores.on {
         display: block;
       }
-      .no-res h3 {
+      .nores h3 {
         font-size: 15px;
         color: var(--ink2);
         margin-bottom: 6px;
       }
 
       /* section */
-      .section {
+      .sec {
         margin-bottom: 40px;
         animation: fadeUp 0.4s ease both;
       }
@@ -485,53 +485,57 @@
           transform: translateY(0);
         }
       }
-      .sec-hd {
+      .sech {
         display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 14px;
       }
       .globe {
-        background: var(--accent-bg);
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: var(--acc-bg);
+        display: grid;
         place-items: center;
         flex-shrink: 0;
       }
       .globe svg {
         width: 15px;
         height: 15px;
-        stroke: var(--accent);
+        stroke: var(--acc);
         fill: none;
         stroke-width: 2;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
-      .sec-domain {
+      .sdom {
         font-size: 14.5px;
         font-weight: 700;
       }
-      .sec-link {
+      .slink {
         font-size: 11.5px;
-        color: var(--muted);
+        color: var(--mut);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 3px;
         transition: color 0.15s;
       }
-      .sec-link:hover {
-        color: var(--accent);
+      .slink:hover {
+        color: var(--acc);
       }
-      .sec-count {
+      .scnt {
         margin-left: auto;
         font-size: 11.5px;
-        color: var(--muted);
+        color: var(--mut);
         background: var(--bg);
-        border: 1px solid var(--border);
+        border: 1px solid var(--bdr);
         border-radius: 20px;
         padding: 2px 9px;
       }
 
-      /* cards row */
+      /* grid */
       .grid {
         display: flex;
         gap: 14px;
@@ -543,18 +547,18 @@
         height: 4px;
       }
       .grid::-webkit-scrollbar-thumb {
-        background: var(--border-s);
+        background: var(--bdrs);
         border-radius: 4px;
       }
       .grid::-webkit-scrollbar-thumb:hover {
-        background: var(--accent);
+        background: var(--acc);
       }
 
       /* card */
       .card {
-        background: var(--surface);
-        border: 1.5px solid var(--border);
-        border-radius: var(--r);
+        background: var(--sur);
+        border: 1.5px solid var(--bdr);
+        border-radius: 12px;
         padding: 16px;
         min-width: 280px;
         max-width: 280px;
@@ -569,11 +573,11 @@
           transform 0.2s;
       }
       .card:hover {
-        border-color: var(--accent);
+        border-color: var(--acc);
         box-shadow: 0 4px 18px rgba(79, 70, 229, 0.1);
         transform: translateY(-2px);
       }
-      .card-actions {
+      .ca {
         position: absolute;
         top: 12px;
         right: 12px;
@@ -583,7 +587,7 @@
         pointer-events: none;
         transition: opacity 0.2s;
       }
-      .card:hover .card-actions {
+      .card:hover .ca {
         opacity: 1;
         pointer-events: auto;
       }
@@ -591,48 +595,50 @@
         width: 26px;
         height: 26px;
         border-radius: 6px;
-        border: 1px solid var(--border);
+        border: 1px solid var(--bdr);
         background: var(--bg);
         display: grid;
         place-items: center;
         cursor: pointer;
-        color: var(--muted);
+        color: var(--mut);
         transition: all 0.15s;
       }
       .act:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: var(--accent-bg);
+        border-color: var(--acc);
+        color: var(--acc);
+        background: var(--acc-bg);
       }
       .act.del:hover {
         border-color: #ef4444;
         color: #ef4444;
         background: #fff5f5;
       }
-      .c-title {
-        font-size: 13.5px;
+      .ct {
+        font-size: 14px;
         font-weight: 700;
         line-height: 1.4;
         padding-right: 60px;
+        color: var(--ink);
       }
-      .c-hi {
+      .chi {
         font-family: "Lora", serif;
         font-style: italic;
         font-size: 12px;
         color: #92400e;
-        background: var(--hi-bg);
-        border-left: 3px solid var(--hi-border);
+        background: var(--hbg);
+        border-left: 3px solid var(--hbdr);
         padding: 7px 10px;
         border-radius: 0 6px 6px 0;
         line-height: 1.55;
+        margin-bottom: 2px;
       }
-      .c-body {
+      .cb {
         font-size: 13px;
         color: var(--ink2);
         line-height: 1.6;
         flex: 1;
       }
-      .c-tags {
+      .ctags {
         display: flex;
         flex-wrap: wrap;
         gap: 5px;
@@ -644,22 +650,22 @@
         padding: 2px 9px;
         border-radius: 20px;
         background: var(--bg);
-        color: var(--muted);
-        border: 1px solid var(--border);
+        color: var(--mut);
+        border: 1px solid var(--bdr);
       }
       .divider {
         height: 1px;
-        background: var(--border);
+        background: var(--bdr);
         margin: 32px 0;
       }
 
       /* skeleton */
-      .skel {
-        background: var(--border);
+      .sk {
+        background: var(--bdr);
         border-radius: 8px;
-        animation: shimmer 1.2s infinite;
+        animation: shim 1.2s infinite;
       }
-      @keyframes shimmer {
+      @keyframes shim {
         0%,
         100% {
           opacity: 1;
@@ -677,10 +683,10 @@
         justify-content: center;
         gap: 10px;
         padding: 80px 40px;
-        color: var(--muted);
+        color: var(--mut);
         text-align: center;
       }
-      .empty-icon {
+      .empty span {
         font-size: 40px;
         opacity: 0.3;
       }
@@ -694,7 +700,7 @@
       }
 
       /* modal */
-      .modal-bg {
+      .mbg {
         display: none;
         position: fixed;
         inset: 0;
@@ -703,11 +709,11 @@
         place-items: center;
         backdrop-filter: blur(3px);
       }
-      .modal-bg.on {
+      .mbg.on {
         display: grid;
       }
       .modal {
-        background: var(--surface);
+        background: var(--sur);
         border-radius: 14px;
         padding: 28px;
         width: 90%;
@@ -730,11 +736,30 @@
         font-weight: 700;
         margin-bottom: 14px;
       }
+      .modal input[type="text"] {
+        width: 100%;
+        border: 1.5px solid var(--bdr);
+        border-radius: 9px;
+        padding: 10px 12px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        outline: none;
+        margin-bottom: 12px;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .modal input[type="text"]:focus {
+        border-color: var(--acc);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      }
       .modal textarea {
         width: 100%;
         min-height: 100px;
         resize: vertical;
-        border: 1.5px solid var(--border);
+        border: 1.5px solid var(--bdr);
         border-radius: 9px;
         padding: 10px 12px;
         font-family: inherit;
@@ -747,10 +772,10 @@
           box-shadow 0.2s;
       }
       .modal textarea:focus {
-        border-color: var(--accent);
+        border-color: var(--acc);
         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
       }
-      .modal-acts {
+      .macts {
         display: flex;
         gap: 8px;
         justify-content: flex-end;
@@ -763,20 +788,20 @@
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
-        border: 1.5px solid var(--border);
+        border: 1.5px solid var(--bdr);
         background: var(--bg);
         color: var(--ink2);
         transition: all 0.15s;
       }
       .btn:hover {
-        background: var(--border);
+        background: var(--bdr);
       }
-      .btn.primary {
-        background: var(--accent);
+      .btn.pri {
+        background: var(--acc);
         color: #fff;
-        border-color: var(--accent);
+        border-color: var(--acc);
       }
-      .btn.primary:hover {
+      .btn.pri:hover {
         background: #4338ca;
         border-color: #4338ca;
       }
@@ -805,7 +830,7 @@
       }
 
       @media (max-width: 768px) {
-        .sidebar {
+        .side {
           position: fixed;
           left: 0;
           top: var(--top);
@@ -814,14 +839,14 @@
           width: var(--nav) !important;
           transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .sidebar.closed {
+        .side.closed {
           transform: translateX(-100%);
-          border-right-color: var(--border) !important;
+          border-right-color: var(--bdr) !important;
         }
         .main {
           padding: 20px 16px;
         }
-        .sync-btn span {
+        .synbtn span {
           display: none;
         }
       }
@@ -829,11 +854,11 @@
   </head>
   <body>
     <header class="topbar">
-      <div class="topbar-logo">
+      <div class="tl">
         <button class="hbtn open" id="hbtn" aria-label="Toggle sidebar">
-          <div class="hicon"><span></span><span></span><span></span></div>
+          <div class="hico"><span></span><span></span><span></span></div>
         </button>
-        <div class="logo-icon">
+        <div class="logo">
           <svg viewBox="0 0 20 20">
             <rect x="3" y="3" width="14" height="2.5" rx="1.25" />
             <rect x="3" y="7.5" width="10" height="2.5" rx="1.25" />
@@ -848,12 +873,11 @@
             />
           </svg>
         </div>
-        <span class="logo-name" style="margin-left: 10px"
-          >Context<span>Note</span></span
-        >
+        <span class="lname">Context<span>Note</span></span>
       </div>
-      <div class="search-wrap">
-        <div class="search-box">
+
+      <div class="sw">
+        <div class="sb">
           <svg viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
@@ -864,12 +888,12 @@
             placeholder="Search notes…"
             autocomplete="off"
           />
-          <button class="s-clear" id="sClear">×</button>
+          <button class="sc" id="sc">×</button>
         </div>
       </div>
 
-      <div class="sync-wrap">
-        <button class="sync-btn" id="syncBtn">
+      <div class="synw">
+        <button class="synbtn" id="synbtn">
           <svg viewBox="0 0 24 24">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
@@ -877,74 +901,74 @@
           </svg>
           <span>Cloud Sync</span>
         </button>
-        <div class="sync-menu" id="syncMenu">
-          <div id="userStatus">Checking auth…</div>
-          <div class="sync-div"></div>
-          <div class="sync-item" onclick="location.href = '/login'">
+        <div class="synmenu" id="synmenu">
+          <div id="uStatus">Checking auth…</div>
+          <div class="sdiv"></div>
+          <div class="sitem" onclick="location.href = '/login'">
             🔑 Login with Google
           </div>
-          <div class="sync-div"></div>
-          <div class="sync-item" onclick="pushToCloud()">
-            ⬆ Upload Local Data
-          </div>
-          <div class="sync-item" onclick="pullFromCloud()">⬇ Download Data</div>
+          <div class="sdiv"></div>
+          <div class="sitem" onclick="push()">⬆ Upload Local Data</div>
+          <div class="sitem" onclick="pull()">⬇ Download Data</div>
         </div>
       </div>
     </header>
 
-    <div class="overlay" id="overlay"></div>
+    <div class="ovl" id="ovl"></div>
 
-    <div class="app-body">
-      <nav class="sidebar" id="sidebar">
-        <div class="sidebar-hd">
-          <span class="sidebar-label">Sources</span>
-          <div class="sidebar-meta" id="sideMeta">Loading…</div>
+    <div class="body">
+      <nav class="side" id="side">
+        <div class="shd">
+          <span class="slbl">Sources</span>
+          <div class="smeta" id="smeta">Loading…</div>
         </div>
-        <div class="sidebar-scroll" id="sideNav"></div>
+        <div class="sscroll" id="snav"></div>
       </nav>
 
       <main class="main" id="main">
-        <div id="skeleton">
+        <div id="skel">
           <div
-            class="skel"
+            class="sk"
             style="height: 26px; width: 160px; margin-bottom: 8px"
           ></div>
           <div
-            class="skel"
+            class="sk"
             style="height: 16px; width: 100px; margin-bottom: 28px"
           ></div>
           <div style="margin-bottom: 36px">
             <div
-              class="skel"
+              class="sk"
               style="height: 28px; width: 200px; margin-bottom: 14px"
             ></div>
             <div style="display: flex; gap: 14px">
-              <div class="skel" style="min-width: 280px; height: 150px"></div>
-              <div class="skel" style="min-width: 280px; height: 150px"></div>
-              <div class="skel" style="min-width: 280px; height: 150px"></div>
+              <div class="sk" style="min-width: 280px; height: 150px"></div>
+              <div class="sk" style="min-width: 280px; height: 150px"></div>
+              <div class="sk" style="min-width: 280px; height: 150px"></div>
             </div>
           </div>
           <div>
             <div
-              class="skel"
+              class="sk"
               style="height: 28px; width: 180px; margin-bottom: 14px"
             ></div>
             <div style="display: flex; gap: 14px">
-              <div class="skel" style="min-width: 280px; height: 150px"></div>
-              <div class="skel" style="min-width: 280px; height: 150px"></div>
+              <div class="sk" style="min-width: 280px; height: 150px"></div>
+              <div class="sk" style="min-width: 280px; height: 150px"></div>
             </div>
           </div>
         </div>
       </main>
     </div>
 
-    <div class="modal-bg" id="modal">
+    <!-- NEW MODAL STRUCTURE -->
+    <div class="mbg" id="modal">
       <div class="modal">
         <h3>Edit Note</h3>
-        <textarea id="editTA" rows="5" placeholder="Note content…"></textarea>
-        <div class="modal-acts">
+        <input type="text" id="etitle" placeholder="Heading..." />
+        <textarea id="eta" rows="5" placeholder="Description..."></textarea>
+        <div class="macts">
           <button class="btn" id="cancelEdit">Cancel</button>
-          <button class="btn primary" id="saveEdit">Save</button>
+          <button class="btn pri" id="saveEdit">Save</button>
         </div>
       </div>
     </div>
@@ -953,59 +977,55 @@
 
     <script>
       const $ = (id) => document.getElementById(id);
-      const hbtn = $("hbtn"),
-        sidebar = $("sidebar"),
-        overlay = $("overlay");
-      const sideNav = $("sideNav"),
-        sideMeta = $("sideMeta"),
-        main = $("main");
-      const search = $("search"),
-        sClear = $("sClear");
-      const syncBtn = $("syncBtn"),
-        syncMenu = $("syncMenu");
-      const modal = $("modal"),
-        editTA = $("editTA"),
-        toastEl = $("toast");
-      let editId = null,
-        toastT = null,
-        allData = [];
+      const E = (a, ev, fn) => a.addEventListener(ev, fn);
+      const esc = (s) =>
+        String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
 
-      /* toast */
-      const toast = (msg, ms = 2600) => {
-        toastEl.textContent = msg;
-        toastEl.classList.add("on");
-        clearTimeout(toastT);
-        toastT = setTimeout(() => toastEl.classList.remove("on"), ms);
+      let eId = null,
+        tT = null,
+        all = [];
+
+      // toast
+      const toast = (m, ms = 2600) => {
+        const t = $("toast");
+        t.textContent = m;
+        t.classList.add("on");
+        clearTimeout(tT);
+        tT = setTimeout(() => t.classList.remove("on"), ms);
       };
 
-      /* sidebar toggle */
-      const mobile = () => window.innerWidth <= 768;
-      const openSide = () => {
-        sidebar.classList.remove("closed");
-        hbtn.classList.add("open");
-        if (mobile()) overlay.classList.add("on");
+      // sidebar
+      const mob = () => window.innerWidth <= 768;
+      const openS = () => {
+        $("side").classList.remove("closed");
+        $("hbtn").classList.add("open");
+        if (mob()) $("ovl").classList.add("on");
       };
-      const closeSide = () => {
-        sidebar.classList.add("closed");
-        hbtn.classList.remove("open");
-        overlay.classList.remove("on");
+      const closeS = () => {
+        $("side").classList.add("closed");
+        $("hbtn").classList.remove("open");
+        $("ovl").classList.remove("on");
       };
-      hbtn.addEventListener("click", () =>
-        sidebar.classList.contains("closed") ? openSide() : closeSide(),
+      E($("hbtn"), "click", () =>
+        $("side").classList.contains("closed") ? openS() : closeS(),
       );
-      overlay.addEventListener("click", closeSide);
+      E($("ovl"), "click", closeS);
 
-      /* sync dropdown */
-      syncBtn.addEventListener("click", (e) => {
+      // sync
+      E($("synbtn"), "click", (e) => {
         e.stopPropagation();
-        syncMenu.classList.toggle("on");
+        $("synmenu").classList.toggle("on");
       });
-      document.addEventListener("click", (e) => {
-        if (!syncMenu.contains(e.target) && e.target !== syncBtn)
-          syncMenu.classList.remove("on");
+      E(document, "click", (e) => {
+        if (!$("synmenu").contains(e.target) && e.target !== $("synbtn"))
+          $("synmenu").classList.remove("on");
       });
-      async function pushToCloud() {
-        syncMenu.classList.remove("on");
+      async function push() {
+        $("synmenu").classList.remove("on");
         toast("Uploading…");
         try {
           const r = await fetch("/api/sync/push", { method: "POST" });
@@ -1014,8 +1034,8 @@
           toast("Network error");
         }
       }
-      async function pullFromCloud() {
-        syncMenu.classList.remove("on");
+      async function pull() {
+        $("synmenu").classList.remove("on");
         toast("Downloading…");
         try {
           const r = await fetch("/api/sync/pull", { method: "POST" });
@@ -1028,72 +1048,70 @@
         }
       }
 
-      /* escape html */
-      const esc = (s) =>
-        String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-
-      /* card html */
-      const cardHTML = (n, domain) => {
-        const body = n.content || "",
-          title = body.length > 55 ? body.slice(0, 55) + "…" : body;
+      // card template (Heading -> Context -> Body)
+      const card = (n, dom) => {
+        const title = n.title || "Untitled";
+        const body = n.content || "";
         const sel = n.selection || n.text_selection || "";
-        return `<div class="card" data-id="${n.id}" data-t="${esc(body.toLowerCase())}">
-      <div class="card-actions">
-        <button class="act edit" title="Edit" onclick="openEdit(${n.id},this.closest('.card').querySelector('.c-body').textContent.trim())">
+
+        // Include both title and body for search filtering
+        const searchStr = (title + " " + body).toLowerCase();
+
+        return `<div class="card" data-id="${n.id}" data-t="${esc(searchStr)}">
+      <div class="ca">
+        <button class="act" title="Edit" onclick="openEdit(${n.id}, this)">
           <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
         <button class="act del" title="Delete" onclick="del(${n.id},this.closest('.card'))">
           <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
       </div>
-      <div class="c-title">${esc(title)}</div>
-      ${sel ? `<div class="c-hi">"${esc(sel)}"</div>` : ""}
-      <div class="c-body">${esc(body)}</div>
-      <div class="c-tags"><span class="tag">${esc(domain.slice(0, 22))}</span></div>
+      <div class="ct">${esc(title)}</div>
+      ${sel ? `<div class="chi">"${esc(sel)}"</div>` : ""}
+      ${body ? `<div class="cb">${esc(body)}</div>` : ""}
+      <div class="ctags"><span class="tag">${esc(dom.slice(0, 22))}</span></div>
     </div>`;
       };
 
-      /* render */
+      // render
       function render(data) {
-        $("skeleton")?.remove();
+        $("skel")?.remove();
         const total = data.reduce((s, w) => s + w.notes.length, 0);
-        sideMeta.textContent = `${data.length} site${data.length !== 1 ? "s" : ""} · ${total} notes`;
-        sideNav.innerHTML = data.length
+        $("smeta").textContent =
+          `${data.length} site${data.length !== 1 ? "s" : ""} · ${total} notes`;
+        $("snav").innerHTML = data.length
           ? data
               .map(
                 (s, i) =>
-                  `<a class="nav-a${i === 0 ? " on" : ""}" href="#s${i}" data-t="s${i}"><div class="dot"></div><span class="nav-d" title="${esc(s.domain)}">${esc(s.domain)}</span><span class="badge">${s.notes.length}</span></a>`,
+                  `<a class="na${i === 0 ? " on" : ""}" href="#s${i}" data-t="s${i}"><div class="dot"></div><span class="nd" title="${esc(s.domain)}">${esc(s.domain)}</span><span class="bdg">${s.notes.length}</span></a>`,
               )
               .join("")
-          : '<p style="padding:12px;font-size:13px;color:var(--muted)">No sources yet.</p>';
+          : '<p style="padding:12px;font-size:13px;color:var(--mut)">No sources yet.</p>';
 
         if (!data.length) {
-          main.innerHTML = `<div class="empty"><div class="empty-icon">📝</div><h3>No notes yet</h3><p>Use the ContextNote extension to save notes from any webpage.</p></div>`;
+          $("main").innerHTML =
+            `<div class="empty"><span>📝</span><h3>No notes yet</h3><p>Use the ContextNote extension to save notes from any webpage.</p></div>`;
           return;
         }
 
-        main.innerHTML = `
-      <div class="main-h">Your Notes</div>
-      <div class="main-s"><strong id="nCount">${total}</strong> notes found</div>
-      <div class="no-res" id="noRes"><h3>No notes match "<span id="noResQ"></span>"</h3><p>Try a different search term.</p></div>
+        $("main").innerHTML = `
+      <div class="mh">Your Notes</div>
+      <div class="ms"><strong id="nc">${total}</strong> notes found</div>
+      <div class="nores" id="nores"><h3>No notes match "<span id="noresq"></span>"</h3><p>Try a different search term.</p></div>
       ${data
         .map(
           (site, i) => `
-        <div class="section" id="s${i}" data-domain="${esc(site.domain)}">
-          <div class="sec-hd">
+        <div class="sec" id="s${i}">
+          <div class="sech">
             <div class="globe"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-            <span class="sec-domain">${esc(site.domain)}</span>
-            <a href="${esc(site.url)}" target="_blank" rel="noopener" class="sec-link">
+            <span class="sdom">${esc(site.domain)}</span>
+            <a href="${esc(site.url)}" target="_blank" rel="noopener" class="slink">
               <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               Visit page
             </a>
-            <span class="sec-count">${site.notes.length} note${site.notes.length !== 1 ? "s" : ""}</span>
+            <span class="scnt">${site.notes.length} note${site.notes.length !== 1 ? "s" : ""}</span>
           </div>
-          <div class="grid">${site.notes.map((n) => cardHTML(n, site.domain)).join("")}</div>
+          <div class="grid">${site.notes.map((n) => card(n, site.domain)).join("")}</div>
           ${i < data.length - 1 ? '<div class="divider"></div>' : ""}
         </div>`,
         )
@@ -1103,66 +1121,70 @@
         bindSearch();
       }
 
-      /* navigation */
+      // nav
       function bindNav() {
-        const navAs = document.querySelectorAll(".nav-a[data-t]"),
-          secs = document.querySelectorAll(".section");
-        navAs.forEach((a) =>
-          a.addEventListener("click", (e) => {
+        const nas = document.querySelectorAll(".na[data-t]"),
+          secs = document.querySelectorAll(".sec");
+        nas.forEach((a) =>
+          E(a, "click", (e) => {
             e.preventDefault();
-            document
-              .getElementById(a.dataset.t)
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            navAs.forEach((n) => n.classList.remove("on"));
+            $(a.dataset.t)?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+            nas.forEach((n) => n.classList.remove("on"));
             a.classList.add("on");
-            if (mobile()) closeSide();
+            if (mob()) closeS();
           }),
         );
-        main.addEventListener("scroll", () => {
+        E($("main"), "scroll", () => {
           let cur = "";
           secs.forEach((s) => {
-            if (main.scrollTop + 100 >= s.offsetTop) cur = s.id;
+            if ($("main").scrollTop + 100 >= s.offsetTop) cur = s.id;
           });
           if (cur)
-            navAs.forEach((a) => a.classList.toggle("on", a.dataset.t === cur));
+            nas.forEach((a) => a.classList.toggle("on", a.dataset.t === cur));
         });
       }
 
-      /* search */
       function bindSearch() {
-        search.addEventListener("input", runSearch);
-        sClear.addEventListener("click", () => {
-          search.value = "";
-          runSearch();
-          search.focus();
+        const inp = $("search"),
+          clr = $("sc");
+        E(inp, "input", run);
+        E(clr, "click", () => {
+          inp.value = "";
+          run();
+          inp.focus();
         });
       }
-      function runSearch() {
-        const q = search.value.trim().toLowerCase();
-        sClear.classList.toggle("on", q.length > 0);
-        const secs = document.querySelectorAll(".section");
+      function run() {
+        const q = $("search").value.trim().toLowerCase();
+        $("sc").classList.toggle("on", q.length > 0);
         let vis = 0;
-        secs.forEach((s) => {
-          let sv = 0;
-          s.querySelectorAll(".card").forEach((c) => {
-            const m = !q || (c.dataset.t || "").includes(q);
-            c.style.display = m ? "" : "none";
-            if (m) sv++;
-          });
-          s.style.display = sv > 0 ? "" : "none";
-          vis += sv;
+        document.querySelectorAll(".sec").forEach((sec) => {
+          const cards = [...sec.querySelectorAll(".card")];
+          const matches = cards.filter(
+            (c) => !q || (c.dataset.t || "").includes(q),
+          );
+          cards.forEach(
+            (c) =>
+              (c.style.display =
+                !q || (c.dataset.t || "").includes(q) ? "" : "none"),
+          );
+          sec.style.display = matches.length > 0 ? "" : "none";
+          vis += matches.length;
         });
-        $("noRes")?.classList.toggle("on", vis === 0 && q.length > 0);
-        const qEl = $("noResQ");
+        $("nores")?.classList.toggle("on", vis === 0 && q.length > 0);
+        const qEl = $("noresq");
         if (qEl) qEl.textContent = q;
-        const nEl = $("nCount");
-        if (nEl)
-          nEl.textContent = q
+        const nc = $("nc");
+        if (nc)
+          nc.textContent = q
             ? vis
-            : allData.reduce((s, w) => s + w.notes.length, 0);
+            : all.reduce((s, w) => s + w.notes.length, 0);
       }
 
-      /* delete */
+      // delete
       async function del(id, el) {
         if (!confirm("Delete this note?")) return;
         try {
@@ -1180,53 +1202,84 @@
         }
       }
 
-      /* edit */
-      function openEdit(id, content) {
-        editId = id;
-        editTA.value = content;
-        modal.classList.add("on");
-        setTimeout(() => editTA.focus(), 50);
+      // Edit (Updated to pull from DOM elements properly)
+      function openEdit(id, btnEl) {
+        eId = id;
+        const cardEl = btnEl.closest(".card");
+
+        const titleEl = cardEl.querySelector(".ct");
+        const descEl = cardEl.querySelector(".cb");
+
+        $("etitle").value = titleEl ? titleEl.textContent.trim() : "";
+        $("eta").value = descEl ? descEl.textContent.trim() : "";
+
+        $("modal").classList.add("on");
+        setTimeout(() => $("etitle").focus(), 50);
       }
+
       function closeEdit() {
-        modal.classList.remove("on");
-        editId = null;
+        $("modal").classList.remove("on");
+        eId = null;
       }
-      $("cancelEdit").addEventListener("click", closeEdit);
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeEdit();
+      E($("cancelEdit"), "click", closeEdit);
+      E($("modal"), "click", (e) => {
+        if (e.target === $("modal")) closeEdit();
       });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.classList.contains("on")) closeEdit();
+      E(document, "keydown", (e) => {
+        if (e.key === "Escape" && $("modal").classList.contains("on"))
+          closeEdit();
       });
-      $("saveEdit").addEventListener("click", async () => {
-        const val = editTA.value.trim();
-        if (!val) {
-          toast("Note cannot be empty");
+
+      E($("saveEdit"), "click", async () => {
+        const titleVal = $("etitle").value.trim() || "Untitled";
+        const contentVal = $("eta").value.trim();
+
+        if (!titleVal && !contentVal) {
+          toast("Note cannot be completely empty");
           return;
         }
+
         try {
-          const r = await fetch(`/api/notes/${editId}`, {
+          const r = await fetch(`/api/notes/${eId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: val }),
+            body: JSON.stringify({ title: titleVal, content: contentVal }),
           });
+
           if (r.ok) {
-            const c = document.querySelector(`.card[data-id="${editId}"]`);
+            const c = document.querySelector(`.card[data-id="${eId}"]`);
             if (c) {
-              c.querySelector(".c-title").textContent =
-                val.length > 55 ? val.slice(0, 55) + "…" : val;
-              c.querySelector(".c-body").textContent = val;
-              c.dataset.t = val.toLowerCase();
+              // Update Title
+              const ct = c.querySelector(".ct");
+              if (ct) ct.textContent = titleVal;
+
+              // Update Content
+              let cb = c.querySelector(".cb");
+              if (contentVal) {
+                if (!cb) {
+                  cb = document.createElement("div");
+                  cb.className = "cb";
+                  c.insertBefore(cb, c.querySelector(".ctags"));
+                }
+                cb.textContent = contentVal;
+              } else if (cb) {
+                cb.remove();
+              }
+
+              // Update Search dataset
+              c.dataset.t = (titleVal + " " + contentVal).toLowerCase();
             }
             closeEdit();
             toast("Note updated ✓");
-          } else toast("Failed to save");
+          } else {
+            toast("Failed to save");
+          }
         } catch {
           toast("Network error");
         }
       });
 
-      /* load */
+      // load
       async function load() {
         try {
           const r = await fetch("/api/notes");
@@ -1234,12 +1287,12 @@
             location.href = "/login";
             return;
           }
-          allData = await r.json();
-          render(allData);
+          all = await r.json();
+          render(all);
           fetch("/api/me")
             .then((r) => (r.ok ? r.json() : null))
             .then((d) => {
-              const el = $("userStatus");
+              const el = $("uStatus");
               if (el)
                 el.textContent = d
                   ? "✓ Signed in as " + (d.email || d.name || "User")
@@ -1247,11 +1300,12 @@
             })
             .catch(() => {});
         } catch {
-          $("skeleton")?.remove();
-          main.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><h3>Could not load notes</h3><p>Make sure the server is running.</p></div>`;
+          $("skel")?.remove();
+          $("main").innerHTML =
+            `<div class="empty"><span>⚠️</span><h3>Could not load notes</h3><p>Make sure the server is running.</p></div>`;
         }
       }
-      window.addEventListener("load", load);
+      E(window, "load", load);
     </script>
   </body>
 </html>

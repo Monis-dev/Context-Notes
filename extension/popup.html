@@ -69,40 +69,47 @@
         }
       }
 
+      .note-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 6px;
+        padding-right: 40px; /* Space for edit/delete buttons */
+        word-wrap: break-word;
+      }
+
       .context {
         font-size: 11px;
-        color: #64748b;
-        margin-bottom: 8px;
-        background: #eff6ff;
+        color: #92400e;
+        background: #fffbeb;
         padding: 8px;
+        margin-bottom: 8px;
         border-radius: 6px;
-        border: 1px dashed #bfdbfe;
+        border-left: 3px solid #f59e0b;
         line-height: 1.4;
-
+        font-style: italic;
         display: block;
-        overflow: visible;
         word-wrap: break-word;
       }
 
       .content {
-        font-size: 15px;
+        font-size: 13px;
         line-height: 1.5;
-        font-weight: bold;
+        font-weight: 400;
+        color: #334155;
         word-wrap: break-word;
-        padding-right: 20px;
       }
 
       .btn-edit {
         position: absolute;
-        bottom: 5px;
-        right: 30px; 
+        top: 8px;
+        right: 32px;
         font-size: 14px;
         color: #94a3b8;
         background: none;
         border: none;
         cursor: pointer;
         padding: 0;
-        font-size: 20px;
       }
 
       .btn-edit:hover {
@@ -111,9 +118,9 @@
 
       .btn-delete {
         position: absolute;
-        bottom: 1px;
+        top: 6px;
         right: 8px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 300;
         color: #94a3b8;
         border: none;
@@ -122,14 +129,26 @@
         line-height: 1;
         padding: 0;
         transition: color 0.2s;
-        font-size: 30px;
       }
 
       .btn-delete:hover {
         color: #ef4444;
       }
 
-      /* 6. Form Elements */
+      /* Form Elements */
+      input[type="text"] {
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px;
+        box-sizing: border-box;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        transition: border-color 0.2s;
+      }
+
       textarea {
         width: 100%;
         border: 1px solid #cbd5e1;
@@ -144,6 +163,7 @@
         transition: border-color 0.2s;
       }
 
+      input[type="text"]:focus,
       textarea:focus {
         outline: none;
         border-color: var(--primary);
@@ -169,7 +189,7 @@
 
       .empty-state {
         text-align: center;
-        font-size: 12px;
+        font-size: 13px;
         color: #94a3b8;
         margin: 20px 0;
       }
@@ -182,12 +202,16 @@
       <div class="empty-state">Loading notes...</div>
     </div>
 
+    <!-- NEW: Title Input -->
+    <input type="text" id="noteTitle" placeholder="Note Heading..." />
+
     <textarea
       id="noteInput"
-      placeholder="Write a note about this page..."
+      placeholder="Description / Note details..."
     ></textarea>
 
     <button id="saveBtn">Save Note</button>
+
     <div
       style="
         text-align: center;
