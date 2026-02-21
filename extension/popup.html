@@ -22,6 +22,13 @@
         overflow: hidden;
       }
 
+      .header-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
       h3 {
         font-size: 18px;
         margin: 0 0 16px 0;
@@ -31,6 +38,24 @@
         align-items: center;
         gap: 8px;
       }
+      .popout-btn {
+        background: none;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        cursor: pointer;
+        padding: 4px 8px;
+        font-size: 14px;
+        color: #475569;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .popout-btn:hover {
+        background: #e2e8f0;
+        color: var(--primary);
+      }
+
 
       #notesList {
         max-height: 280px;
@@ -193,10 +218,22 @@
         color: #94a3b8;
         margin: 20px 0;
       }
+
+      .icon-img {
+        width: 20px;
+        height: 20px;
+      }
     </style>
   </head>
   <body>
-    <h3><span>📝</span> ContextNote</h3>
+    <div class="header-wrap">
+      <h3>
+      <img src="./icons/icon-24.png" alt="notes icon" class="icon-img" />
+      ContextNote
+    </h3>
+    <button id="popOutBtn" class="popout-btn" title="Open sticky window">📌 Pop Out</button>
+    </div>
+    
 
     <div id="notesList">
       <div class="empty-state">Loading notes...</div>

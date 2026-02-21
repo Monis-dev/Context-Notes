@@ -209,7 +209,7 @@
         display: block;
       }
 
-      /* sync */
+      /* account/sync menu */
       .synw {
         position: relative;
         flex-shrink: 0;
@@ -294,6 +294,12 @@
       }
       .sitem:hover {
         background: var(--bg);
+      }
+      .sitem.danger {
+        color: #ef4444;
+      }
+      .sitem.danger:hover {
+        background: #fef2f2;
       }
 
       /* layout */
@@ -892,15 +898,23 @@
         </div>
       </div>
 
+      <!-- Account Button Replaced Cloud Sync -->
       <div class="synw">
         <button class="synbtn" id="synbtn">
-          <svg viewBox="0 0 24 24">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
+          <svg
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <span>Cloud Sync</span>
+          <span>Account</span>
         </button>
+
         <div class="synmenu" id="synmenu">
           <div id="uStatus">Checking auth…</div>
           <div class="sdiv"></div>
@@ -908,8 +922,9 @@
             🔑 Login with Google
           </div>
           <div class="sdiv"></div>
-          <div class="sitem" onclick="push()">⬆ Upload Local Data</div>
-          <div class="sitem" onclick="pull()">⬇ Download Data</div>
+          <div class="sitem danger" onclick="location.href = '/logout'">
+            🚪 Logout
+          </div>
         </div>
       </div>
     </header>
@@ -946,21 +961,10 @@
               <div class="sk" style="min-width: 280px; height: 150px"></div>
             </div>
           </div>
-          <div>
-            <div
-              class="sk"
-              style="height: 28px; width: 180px; margin-bottom: 14px"
-            ></div>
-            <div style="display: flex; gap: 14px">
-              <div class="sk" style="min-width: 280px; height: 150px"></div>
-              <div class="sk" style="min-width: 280px; height: 150px"></div>
-            </div>
-          </div>
         </div>
       </main>
     </div>
 
-    <!-- NEW MODAL STRUCTURE -->
     <div class="mbg" id="modal">
       <div class="modal">
         <h3>Edit Note</h3>
@@ -989,7 +993,6 @@
         tT = null,
         all = [];
 
-      // toast
       const toast = (m, ms = 2600) => {
         const t = $("toast");
         t.textContent = m;
@@ -998,7 +1001,6 @@
         tT = setTimeout(() => t.classList.remove("on"), ms);
       };
 
-      // sidebar
       const mob = () => window.innerWidth <= 768;
       const openS = () => {
         $("side").classList.remove("closed");
@@ -1015,7 +1017,7 @@
       );
       E($("ovl"), "click", closeS);
 
-      // sync
+      // account menu
       E($("synbtn"), "click", (e) => {
         e.stopPropagation();
         $("synmenu").classList.toggle("on");
@@ -1024,37 +1026,11 @@
         if (!$("synmenu").contains(e.target) && e.target !== $("synbtn"))
           $("synmenu").classList.remove("on");
       });
-      async function push() {
-        $("synmenu").classList.remove("on");
-        toast("Uploading…");
-        try {
-          const r = await fetch("/api/sync/push", { method: "POST" });
-          toast(r.ok ? "Uploaded ✓" : "Upload failed");
-        } catch {
-          toast("Network error");
-        }
-      }
-      async function pull() {
-        $("synmenu").classList.remove("on");
-        toast("Downloading…");
-        try {
-          const r = await fetch("/api/sync/pull", { method: "POST" });
-          if (r.ok) {
-            toast("Downloaded ✓");
-            load();
-          } else toast("Download failed");
-        } catch {
-          toast("Network error");
-        }
-      }
 
-      // card template (Heading -> Context -> Body)
       const card = (n, dom) => {
         const title = n.title || "Untitled";
         const body = n.content || "";
         const sel = n.selection || n.text_selection || "";
-
-        // Include both title and body for search filtering
         const searchStr = (title + " " + body).toLowerCase();
 
         return `<div class="card" data-id="${n.id}" data-t="${esc(searchStr)}">
@@ -1073,7 +1049,6 @@
     </div>`;
       };
 
-      // render
       function render(data) {
         $("skel")?.remove();
         const total = data.reduce((s, w) => s + w.notes.length, 0);
@@ -1121,7 +1096,6 @@
         bindSearch();
       }
 
-      // nav
       function bindNav() {
         const nas = document.querySelectorAll(".na[data-t]"),
           secs = document.querySelectorAll(".sec");
@@ -1157,6 +1131,7 @@
           inp.focus();
         });
       }
+
       function run() {
         const q = $("search").value.trim().toLowerCase();
         $("sc").classList.toggle("on", q.length > 0);
@@ -1184,7 +1159,6 @@
             : all.reduce((s, w) => s + w.notes.length, 0);
       }
 
-      // delete
       async function del(id, el) {
         if (!confirm("Delete this note?")) return;
         try {
@@ -1202,17 +1176,13 @@
         }
       }
 
-      // Edit (Updated to pull from DOM elements properly)
       function openEdit(id, btnEl) {
         eId = id;
         const cardEl = btnEl.closest(".card");
-
         const titleEl = cardEl.querySelector(".ct");
         const descEl = cardEl.querySelector(".cb");
-
         $("etitle").value = titleEl ? titleEl.textContent.trim() : "";
         $("eta").value = descEl ? descEl.textContent.trim() : "";
-
         $("modal").classList.add("on");
         setTimeout(() => $("etitle").focus(), 50);
       }
@@ -1233,27 +1203,21 @@
       E($("saveEdit"), "click", async () => {
         const titleVal = $("etitle").value.trim() || "Untitled";
         const contentVal = $("eta").value.trim();
-
         if (!titleVal && !contentVal) {
           toast("Note cannot be completely empty");
           return;
         }
-
         try {
           const r = await fetch(`/api/notes/${eId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: titleVal, content: contentVal }),
           });
-
           if (r.ok) {
             const c = document.querySelector(`.card[data-id="${eId}"]`);
             if (c) {
-              // Update Title
               const ct = c.querySelector(".ct");
               if (ct) ct.textContent = titleVal;
-
-              // Update Content
               let cb = c.querySelector(".cb");
               if (contentVal) {
                 if (!cb) {
@@ -1265,8 +1229,6 @@
               } else if (cb) {
                 cb.remove();
               }
-
-              // Update Search dataset
               c.dataset.t = (titleVal + " " + contentVal).toLowerCase();
             }
             closeEdit();
@@ -1279,12 +1241,12 @@
         }
       });
 
-      // load
       async function load() {
         try {
           const r = await fetch("/api/notes");
           if (r.status === 401) {
-            location.href = "/login";
+            // Unauthenticated user -> clear local data completely so they don't see old cached stuff
+            $("uStatus").textContent = "Not signed in";
             return;
           }
           all = await r.json();
@@ -1292,9 +1254,8 @@
           fetch("/api/me")
             .then((r) => (r.ok ? r.json() : null))
             .then((d) => {
-              const el = $("uStatus");
-              if (el)
-                el.textContent = d
+              if ($("uStatus"))
+                $("uStatus").textContent = d
                   ? "✓ Signed in as " + (d.email || d.name || "User")
                   : "Not signed in";
             })
