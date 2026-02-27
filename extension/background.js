@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000"; // Change to Render URL after deployment
+const STORAGE_KEY = "context_notes_data";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -8,17 +8,14 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-// Listen for context menu clicks
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "save-highlight") {
-    // Inject a beautiful UI dialog directly into the page
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       args: [info.selectionText],
       func: (selectionText) => {
         if (document.getElementById("cn-ext-dialog")) return;
 
-        // Create a native HTML dialog element
         const dialog = document.createElement("dialog");
         dialog.id = "cn-ext-dialog";
         dialog.style.cssText = `
@@ -44,27 +41,26 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         document.body.appendChild(dialog);
         dialog.showModal();
 
-        // Close logic
         document.getElementById("cn-cancel").onclick = () => dialog.remove();
 
-        // Save logic
         document.getElementById("cn-save").onclick = () => {
           const title =
             document.getElementById("cn-title").value.trim() ||
             "Highlighted Text";
           const desc = document.getElementById("cn-desc").value.trim();
 
-          // Send data back to the background script to save it
+          // Send data back to the background script to save locally
           chrome.runtime.sendMessage({
             action: "save_highlight_data",
             data: {
+              id: Date.now().toString(), // Unique Local ID
               url: window.location.href,
+              domain: window.location.hostname,
               title: title,
               content: desc,
               selection: selectionText,
             },
           });
-
           dialog.remove();
         };
       },
@@ -72,19 +68,13 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-// Listen for the save message from the injected dialog
+// Listener: Receives the note and saves it to Chrome Local Storage
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "save_highlight_data") {
-    fetch(`${API_BASE}/api/notes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request.data),
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok)
-          console.error("Server rejected the note. Ensure you are logged in.");
-      })
-      .catch((e) => console.error("Sync failed", e));
+    chrome.storage.local.get(STORAGE_KEY, (res) => {
+      const notes = res[STORAGE_KEY] ? JSON.parse(res[STORAGE_KEY]) : [];
+      notes.push(request.data);
+      chrome.storage.local.set({ [STORAGE_KEY]: JSON.stringify(notes) });
+    });
   }
 });

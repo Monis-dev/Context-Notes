@@ -42,7 +42,7 @@
         overflow: hidden;
       }
 
-      /* ── topbar ── */
+      /* Topbar */
       .topbar {
         height: var(--top);
         background: var(--sur);
@@ -87,7 +87,7 @@
         color: var(--acc);
       }
 
-      /* hamburger */
+      /* Hamburger */
       .hbtn {
         width: 34px;
         height: 34px;
@@ -139,7 +139,7 @@
         transform: translateY(-6px) rotate(-45deg);
       }
 
-      /* search */
+      /* Search */
       .sw {
         flex: 1;
         padding: 0 20px;
@@ -209,10 +209,35 @@
         display: block;
       }
 
-      /* account/sync menu */
+      /* Sync Menu & Buttons */
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1.5px solid var(--bdr);
+        background: var(--sur);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        color: var(--ink2);
+        transition: all 0.2s;
+        font-weight: bold;
+        font-family: inherit;
+      }
+      .icon-btn:hover {
+        border-color: var(--acc);
+        color: var(--acc);
+        background: var(--acc-bg);
+      }
+
       .synw {
         position: relative;
-        flex-shrink: 0;
       }
       .synbtn {
         background: var(--sur);
@@ -302,7 +327,7 @@
         background: #fef2f2;
       }
 
-      /* layout */
+      /* Layout */
       .body {
         display: flex;
         flex: 1;
@@ -322,7 +347,7 @@
         display: block;
       }
 
-      /* sidebar */
+      /* Sidebar */
       .side {
         width: var(--nav);
         background: var(--sur);
@@ -434,7 +459,7 @@
         transition: all 0.15s;
       }
 
-      /* main */
+      /* Main */
       .main {
         flex: 1;
         overflow-y: auto;
@@ -476,7 +501,7 @@
         margin-bottom: 6px;
       }
 
-      /* section */
+      /* Section */
       .sec {
         margin-bottom: 40px;
         animation: fadeUp 0.4s ease both;
@@ -541,7 +566,7 @@
         padding: 2px 9px;
       }
 
-      /* grid */
+      /* Grid */
       .grid {
         display: flex;
         gap: 14px;
@@ -559,8 +584,12 @@
       .grid::-webkit-scrollbar-thumb:hover {
         background: var(--acc);
       }
+      .grid.wrap {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
 
-      /* card */
+      /* Card */
       .card {
         background: var(--sur);
         border: 1.5px solid var(--bdr);
@@ -665,23 +694,47 @@
         margin: 32px 0;
       }
 
-      /* skeleton */
-      .sk {
-        background: var(--bdr);
+      .btn-view-more {
+        background: #eef2ff;
+        color: #4f46e5;
+        border: 1px solid #c7d2fe;
         border-radius: 8px;
-        animation: shim 1.2s infinite;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
-      @keyframes shim {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.45;
-        }
+      .btn-view-more:hover {
+        background: #4f46e5;
+        color: white;
+      }
+      .back-btn {
+        background: none;
+        border: 1px solid var(--bdr);
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink2);
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        background: var(--bg);
+        color: var(--ink);
+        border-color: var(--bdrs);
       }
 
-      /* empty */
+      /* Empty */
       .empty {
         display: flex;
         flex-direction: column;
@@ -705,7 +758,7 @@
         font-size: 13px;
       }
 
-      /* modal */
+      /* Modals */
       .mbg {
         display: none;
         position: fixed;
@@ -742,45 +795,58 @@
         font-weight: 700;
         margin-bottom: 14px;
       }
-      .modal input[type="text"] {
-        width: 100%;
-        border: 1.5px solid var(--bdr);
-        border-radius: 9px;
-        padding: 10px 12px;
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 600;
+
+      /* Info Modal Styling */
+      .info-box {
+        background: var(--bg);
+        border: 1px solid var(--bdr);
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--ink2);
+        margin-bottom: 16px;
+      }
+      .info-box strong {
         color: var(--ink);
-        outline: none;
-        margin-bottom: 12px;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
+        display: block;
+        margin-bottom: 4px;
       }
-      .modal input[type="text"]:focus {
-        border-color: var(--acc);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      .info-box span {
+        font-size: 16px;
+        margin-right: 6px;
       }
+
+      .modal input[type="text"],
       .modal textarea {
         width: 100%;
-        min-height: 100px;
-        resize: vertical;
         border: 1.5px solid var(--bdr);
         border-radius: 9px;
         padding: 10px 12px;
         font-family: inherit;
-        font-size: 13.5px;
         color: var(--ink);
         outline: none;
-        line-height: 1.6;
         transition:
           border-color 0.2s,
           box-shadow 0.2s;
       }
+      .modal input[type="text"] {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .modal textarea {
+        min-height: 100px;
+        resize: vertical;
+        font-size: 13.5px;
+        line-height: 1.6;
+      }
+      .modal input[type="text"]:focus,
       .modal textarea:focus {
         border-color: var(--acc);
         box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
       }
+
       .macts {
         display: flex;
         gap: 8px;
@@ -811,8 +877,17 @@
         background: #4338ca;
         border-color: #4338ca;
       }
+      .btn.danger {
+        background: #ef4444;
+        color: #fff;
+        border-color: #ef4444;
+      }
+      .btn.danger:hover {
+        background: #dc2626;
+        border-color: #dc2626;
+      }
 
-      /* toast */
+      /* Toast */
       .toast {
         position: fixed;
         bottom: 24px;
@@ -898,32 +973,32 @@
         </div>
       </div>
 
-      <!-- Account Button Replaced Cloud Sync -->
-      <div class="synw">
-        <button class="synbtn" id="synbtn">
-          <svg
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <span>Account</span>
+      <div class="top-actions">
+        <!-- New Info Button -->
+        <button class="icon-btn" id="infoBtn" title="How your data is stored">
+          ?
         </button>
 
-        <div class="synmenu" id="synmenu">
-          <div id="uStatus">Checking auth…</div>
-          <div class="sdiv"></div>
-          <div class="sitem" onclick="location.href = '/login'">
-            🔑 Login with Google
-          </div>
-          <div class="sdiv"></div>
-          <div class="sitem danger" onclick="location.href = '/logout'">
-            🚪 Logout
+        <div class="synw">
+          <button class="synbtn" id="synbtn">
+            <svg
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Account</span>
+          </button>
+
+          <div class="synmenu" id="synmenu">
+            <div id="uStatus">Local Mode Only</div>
+            <div class="sdiv"></div>
+            <div class="sitem" id="loginBtn">🔑 Sync via Google</div>
           </div>
         </div>
       </div>
@@ -950,21 +1025,13 @@
             class="sk"
             style="height: 16px; width: 100px; margin-bottom: 28px"
           ></div>
-          <div style="margin-bottom: 36px">
-            <div
-              class="sk"
-              style="height: 28px; width: 200px; margin-bottom: 14px"
-            ></div>
-            <div style="display: flex; gap: 14px">
-              <div class="sk" style="min-width: 280px; height: 150px"></div>
-              <div class="sk" style="min-width: 280px; height: 150px"></div>
-              <div class="sk" style="min-width: 280px; height: 150px"></div>
-            </div>
-          </div>
         </div>
       </main>
+
+      <main class="main" id="singlePageView" style="display: none"></main>
     </div>
 
+    <!-- Edit Modal -->
     <div class="mbg" id="modal">
       <div class="modal">
         <h3>Edit Note</h3>
@@ -977,296 +1044,78 @@
       </div>
     </div>
 
+    <!-- Data Guide Modal -->
+    <div class="mbg" id="guideModal">
+      <div class="modal">
+        <h3>How ContextNote Stores Your Data</h3>
+
+        <div class="info-box">
+          <strong><span>🏠</span> Local by Default (Offline)</strong>
+          If you don't log in, your notes live entirely on your computer's hard
+          drive. They are fast, completely private, and available offline.
+        </div>
+
+        <div
+          class="info-box"
+          style="background: var(--acc-bg); border-color: #c7d2fe"
+        >
+          <strong><span>☁️</span> Cloud Sync (Cross-Device)</strong>
+          Logging in backs up your notes to our cloud servers so you can view
+          them on your laptop, desktop, or mobile device.
+        </div>
+
+        <div
+          class="info-box"
+          style="background: #fffbeb; border-color: #fcd34d; color: #92400e"
+        >
+          <strong><span>⚠️</span> Important Warning</strong>
+          ContextNote uses free cloud hosting. In the rare event of a server
+          error, cloud backups might be lost.
+          <b>Your local offline device remains your safest primary backup!</b>
+        </div>
+
+        <div class="macts" id="guideActs">
+          <button class="btn" id="closeGuideBtn">Got it</button>
+          <button class="btn pri" id="proceedLoginBtn" style="display: none">
+            I understand, Login
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="mbg" id="logoutModal">
+      <div class="modal">
+        <h3>Log Out Options</h3>
+        <p
+          style="
+            font-size: 13.5px;
+            color: var(--mut);
+            margin-bottom: 20px;
+            line-height: 1.5;
+          "
+        >
+          You are about to disconnect from the cloud. What would you like to do
+          with the notes currently saved on <b>this device</b>?
+        </p>
+        <div class="macts" style="flex-direction: column; gap: 10px">
+          <button class="btn" id="cancelLogout">Cancel</button>
+          <button
+            class="btn pri"
+            id="logoutKeepBtn"
+            style="background: var(--ink); border-color: var(--ink)"
+          >
+            Log out & <b>Keep</b> Notes on this device
+          </button>
+          <button class="btn danger" id="logoutWipeBtn">
+            Log out & <b>Delete</b> Notes from this device
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
-    <script>
-      const $ = (id) => document.getElementById(id);
-      const E = (a, ev, fn) => a.addEventListener(ev, fn);
-      const esc = (s) =>
-        String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-
-      let eId = null,
-        tT = null,
-        all = [];
-
-      const toast = (m, ms = 2600) => {
-        const t = $("toast");
-        t.textContent = m;
-        t.classList.add("on");
-        clearTimeout(tT);
-        tT = setTimeout(() => t.classList.remove("on"), ms);
-      };
-
-      const mob = () => window.innerWidth <= 768;
-      const openS = () => {
-        $("side").classList.remove("closed");
-        $("hbtn").classList.add("open");
-        if (mob()) $("ovl").classList.add("on");
-      };
-      const closeS = () => {
-        $("side").classList.add("closed");
-        $("hbtn").classList.remove("open");
-        $("ovl").classList.remove("on");
-      };
-      E($("hbtn"), "click", () =>
-        $("side").classList.contains("closed") ? openS() : closeS(),
-      );
-      E($("ovl"), "click", closeS);
-
-      // account menu
-      E($("synbtn"), "click", (e) => {
-        e.stopPropagation();
-        $("synmenu").classList.toggle("on");
-      });
-      E(document, "click", (e) => {
-        if (!$("synmenu").contains(e.target) && e.target !== $("synbtn"))
-          $("synmenu").classList.remove("on");
-      });
-
-      const card = (n, dom) => {
-        const title = n.title || "Untitled";
-        const body = n.content || "";
-        const sel = n.selection || n.text_selection || "";
-        const searchStr = (title + " " + body).toLowerCase();
-
-        return `<div class="card" data-id="${n.id}" data-t="${esc(searchStr)}">
-      <div class="ca">
-        <button class="act" title="Edit" onclick="openEdit(${n.id}, this)">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="act del" title="Delete" onclick="del(${n.id},this.closest('.card'))">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>
-      </div>
-      <div class="ct">${esc(title)}</div>
-      ${sel ? `<div class="chi">"${esc(sel)}"</div>` : ""}
-      ${body ? `<div class="cb">${esc(body)}</div>` : ""}
-      <div class="ctags"><span class="tag">${esc(dom.slice(0, 22))}</span></div>
-    </div>`;
-      };
-
-      function render(data) {
-        $("skel")?.remove();
-        const total = data.reduce((s, w) => s + w.notes.length, 0);
-        $("smeta").textContent =
-          `${data.length} site${data.length !== 1 ? "s" : ""} · ${total} notes`;
-        $("snav").innerHTML = data.length
-          ? data
-              .map(
-                (s, i) =>
-                  `<a class="na${i === 0 ? " on" : ""}" href="#s${i}" data-t="s${i}"><div class="dot"></div><span class="nd" title="${esc(s.domain)}">${esc(s.domain)}</span><span class="bdg">${s.notes.length}</span></a>`,
-              )
-              .join("")
-          : '<p style="padding:12px;font-size:13px;color:var(--mut)">No sources yet.</p>';
-
-        if (!data.length) {
-          $("main").innerHTML =
-            `<div class="empty"><span>📝</span><h3>No notes yet</h3><p>Use the ContextNote extension to save notes from any webpage.</p></div>`;
-          return;
-        }
-
-        $("main").innerHTML = `
-      <div class="mh">Your Notes</div>
-      <div class="ms"><strong id="nc">${total}</strong> notes found</div>
-      <div class="nores" id="nores"><h3>No notes match "<span id="noresq"></span>"</h3><p>Try a different search term.</p></div>
-      ${data
-        .map(
-          (site, i) => `
-        <div class="sec" id="s${i}">
-          <div class="sech">
-            <div class="globe"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-            <span class="sdom">${esc(site.domain)}</span>
-            <a href="${esc(site.url)}" target="_blank" rel="noopener" class="slink">
-              <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              Visit page
-            </a>
-            <span class="scnt">${site.notes.length} note${site.notes.length !== 1 ? "s" : ""}</span>
-          </div>
-          <div class="grid">${site.notes.map((n) => card(n, site.domain)).join("")}</div>
-          ${i < data.length - 1 ? '<div class="divider"></div>' : ""}
-        </div>`,
-        )
-        .join("")}`;
-
-        bindNav();
-        bindSearch();
-      }
-
-      function bindNav() {
-        const nas = document.querySelectorAll(".na[data-t]"),
-          secs = document.querySelectorAll(".sec");
-        nas.forEach((a) =>
-          E(a, "click", (e) => {
-            e.preventDefault();
-            $(a.dataset.t)?.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-            nas.forEach((n) => n.classList.remove("on"));
-            a.classList.add("on");
-            if (mob()) closeS();
-          }),
-        );
-        E($("main"), "scroll", () => {
-          let cur = "";
-          secs.forEach((s) => {
-            if ($("main").scrollTop + 100 >= s.offsetTop) cur = s.id;
-          });
-          if (cur)
-            nas.forEach((a) => a.classList.toggle("on", a.dataset.t === cur));
-        });
-      }
-
-      function bindSearch() {
-        const inp = $("search"),
-          clr = $("sc");
-        E(inp, "input", run);
-        E(clr, "click", () => {
-          inp.value = "";
-          run();
-          inp.focus();
-        });
-      }
-
-      function run() {
-        const q = $("search").value.trim().toLowerCase();
-        $("sc").classList.toggle("on", q.length > 0);
-        let vis = 0;
-        document.querySelectorAll(".sec").forEach((sec) => {
-          const cards = [...sec.querySelectorAll(".card")];
-          const matches = cards.filter(
-            (c) => !q || (c.dataset.t || "").includes(q),
-          );
-          cards.forEach(
-            (c) =>
-              (c.style.display =
-                !q || (c.dataset.t || "").includes(q) ? "" : "none"),
-          );
-          sec.style.display = matches.length > 0 ? "" : "none";
-          vis += matches.length;
-        });
-        $("nores")?.classList.toggle("on", vis === 0 && q.length > 0);
-        const qEl = $("noresq");
-        if (qEl) qEl.textContent = q;
-        const nc = $("nc");
-        if (nc)
-          nc.textContent = q
-            ? vis
-            : all.reduce((s, w) => s + w.notes.length, 0);
-      }
-
-      async function del(id, el) {
-        if (!confirm("Delete this note?")) return;
-        try {
-          const r = await fetch(`/api/notes/${id}`, { method: "DELETE" });
-          if (r.ok) {
-            el.style.cssText =
-              "transition:opacity .3s,transform .3s;opacity:0;transform:scale(.92)";
-            setTimeout(() => {
-              el.remove();
-              toast("Note deleted");
-            }, 300);
-          } else toast("Failed to delete");
-        } catch {
-          toast("Network error");
-        }
-      }
-
-      function openEdit(id, btnEl) {
-        eId = id;
-        const cardEl = btnEl.closest(".card");
-        const titleEl = cardEl.querySelector(".ct");
-        const descEl = cardEl.querySelector(".cb");
-        $("etitle").value = titleEl ? titleEl.textContent.trim() : "";
-        $("eta").value = descEl ? descEl.textContent.trim() : "";
-        $("modal").classList.add("on");
-        setTimeout(() => $("etitle").focus(), 50);
-      }
-
-      function closeEdit() {
-        $("modal").classList.remove("on");
-        eId = null;
-      }
-      E($("cancelEdit"), "click", closeEdit);
-      E($("modal"), "click", (e) => {
-        if (e.target === $("modal")) closeEdit();
-      });
-      E(document, "keydown", (e) => {
-        if (e.key === "Escape" && $("modal").classList.contains("on"))
-          closeEdit();
-      });
-
-      E($("saveEdit"), "click", async () => {
-        const titleVal = $("etitle").value.trim() || "Untitled";
-        const contentVal = $("eta").value.trim();
-        if (!titleVal && !contentVal) {
-          toast("Note cannot be completely empty");
-          return;
-        }
-        try {
-          const r = await fetch(`/api/notes/${eId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: titleVal, content: contentVal }),
-          });
-          if (r.ok) {
-            const c = document.querySelector(`.card[data-id="${eId}"]`);
-            if (c) {
-              const ct = c.querySelector(".ct");
-              if (ct) ct.textContent = titleVal;
-              let cb = c.querySelector(".cb");
-              if (contentVal) {
-                if (!cb) {
-                  cb = document.createElement("div");
-                  cb.className = "cb";
-                  c.insertBefore(cb, c.querySelector(".ctags"));
-                }
-                cb.textContent = contentVal;
-              } else if (cb) {
-                cb.remove();
-              }
-              c.dataset.t = (titleVal + " " + contentVal).toLowerCase();
-            }
-            closeEdit();
-            toast("Note updated ✓");
-          } else {
-            toast("Failed to save");
-          }
-        } catch {
-          toast("Network error");
-        }
-      });
-
-      async function load() {
-        try {
-          const r = await fetch("/api/notes");
-          if (r.status === 401) {
-            // Unauthenticated user -> clear local data completely so they don't see old cached stuff
-            $("uStatus").textContent = "Not signed in";
-            return;
-          }
-          all = await r.json();
-          render(all);
-          fetch("/api/me")
-            .then((r) => (r.ok ? r.json() : null))
-            .then((d) => {
-              if ($("uStatus"))
-                $("uStatus").textContent = d
-                  ? "✓ Signed in as " + (d.email || d.name || "User")
-                  : "Not signed in";
-            })
-            .catch(() => {});
-        } catch {
-          $("skel")?.remove();
-          $("main").innerHTML =
-            `<div class="empty"><span>⚠️</span><h3>Could not load notes</h3><p>Make sure the server is running.</p></div>`;
-        }
-      }
-      E(window, "load", load);
-    </script>
+    <script src="dashboard.js"></script>
   </body>
 </html>

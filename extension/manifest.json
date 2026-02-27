@@ -1,11 +1,28 @@
 {
   "manifest_version": 3,
-  "name": "ContextNote",
+  "name": "ContextNote | Research Assistant",
   "version": "1.0",
-  "permissions": ["activeTab", "contextMenus", "storage", "scripting"],
-  "host_permissions": ["http://127.0.0.1:5000/*"],
-  "background": { "service_worker": "background.js" },
-  "action": { "default_popup": "popup.html" },
+  "description": "Highlight, annotate, and save research directly from your browser.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "icons": {
     "24": "icons/icon-24.png",
     "64": "icons/icon-64.png",
