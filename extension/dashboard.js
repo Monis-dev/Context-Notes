@@ -25,7 +25,7 @@ const toast = (m, ms = 2600) => {
   tT = setTimeout(() => t.classList.remove("on"), ms);
 };
 
-// --- UI Toggles ---
+// UI Toggles
 const mob = () => window.innerWidth <= 768;
 const openS = () => {
   $("side").classList.remove("closed");
@@ -113,14 +113,15 @@ function render(groupedData) {
   $("skel")?.remove();
   const total = allNotesFlat.length;
   $("smeta").textContent =
-    `${groupedData.length} site${groupedData.length !== 1 ? "s" : ""} · ${total} notes`;
+    `${groupedData.length} page${groupedData.length !== 1 ? "s" : ""} · ${total} notes`;
 
+  // Navigation Sidebar
   $("snav").innerHTML = groupedData.length
     ? groupedData
-        .map(
-          (s, i) =>
-            `<a class="na${i === 0 ? " on" : ""}" href="#s${i}" data-t="s${i}"><div class="dot"></div><span class="nd" title="${esc(s.domain)}">${esc(s.domain)}</span><span class="bdg">${s.notes.length}</span></a>`,
-        )
+        .map((s, i) => {
+          const shortName = s.domain.replace(/^www\./, "");
+          return `<a class="na${i === 0 ? " on" : ""}" href="#s${i}" data-t="s${i}" title="${esc(s.url)}"><div class="dot"></div><span class="nd">${esc(shortName)}</span><span class="bdg">${s.notes.length}</span></a>`;
+        })
         .join("")
     : '<p style="padding:12px;font-size:13px;color:var(--mut)">No sources yet.</p>';
 
@@ -150,11 +151,16 @@ function render(groupedData) {
 
         let gridHTML = displayNotes.map((n) => card(n, site.domain)).join("");
 
+        // Clean up the URL for display (remove https:// and truncate)
+        let niceUrl = site.url.replace(/^https?:\/\/(www\.)?/, "");
+        niceUrl =
+          niceUrl.length > 50 ? niceUrl.substring(0, 50) + "..." : niceUrl;
+
         return `
       <div class="sec" id="s${i}">
         <div class="sech">
           <div class="globe"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-          <span class="sdom">${esc(site.domain)}</span>
+          <span class="sdom" title="${esc(site.url)}" style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(niceUrl)}</span>
           <a href="${esc(site.url)}" target="_blank" rel="noopener" class="slink">Visit page ↗</a>
           <span class="scnt">${site.notes.length} note${site.notes.length !== 1 ? "s" : ""}</span>
         </div>
@@ -165,7 +171,8 @@ function render(groupedData) {
           hiddenCount > 0
             ? `
           <div style="margin-top:10px;">
-            <button class="btn-view-more" data-domain="${site.domain}">
+            <!-- Note we pass site.url instead of site.domain now! -->
+            <button class="btn-view-more" data-url="${site.url}">
               View ${hiddenCount} More Notes ➔
             </button>
           </div>`
@@ -181,21 +188,25 @@ function render(groupedData) {
 }
 
 // --- SPECIFIC WEBPAGE VIEW LOGIC ---
-function openSpecificPage(domain) {
+function openSpecificPage(targetUrl) {
   $("main").style.display = "none";
   $("singlePageView").style.display = "block";
 
-  const siteNotes = allNotesFlat.filter((n) => n.domain === domain);
+  const siteNotes = allNotesFlat.filter((n) => n.url === targetUrl);
   siteNotes.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+  const cleanUrl = targetUrl.replace(/^https?:\/\/(www\.)?/, "");
 
   $("singlePageView").innerHTML = `
     <button class="back-btn" id="backToDash">
       <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
       Back to Dashboard
     </button>
-    <div class="mh" style="margin-bottom: 24px;">${esc(domain)}</div>
+    <div class="mh" style="margin-bottom: 24px; font-size: 18px; word-break: break-all;">
+      <a href="${esc(targetUrl)}" target="_blank" style="color:inherit; text-decoration:none;">${esc(cleanUrl)} ↗</a>
+    </div>
     <div class="grid wrap">
-      ${siteNotes.map((n) => card(n, domain)).join("")}
+      ${siteNotes.map((n) => card(n, siteNotes[0].domain)).join("")}
     </div>
   `;
 
@@ -212,15 +223,13 @@ document.addEventListener("click", (e) => {
   const delBtn = e.target.closest(".btn-delete");
   const pinBtn = e.target.closest(".btn-pin");
   const viewMoreBtn = e.target.closest(".btn-view-more");
-  const logoutBtn = e.target.closest("#logoutBtn"); // The injected logout button
+  const logoutBtn = e.target.closest("#logoutBtn");
 
-  if (viewMoreBtn) {
-    openSpecificPage(viewMoreBtn.dataset.domain);
-  }
+  if (viewMoreBtn) openSpecificPage(viewMoreBtn.dataset.url);
 
   if (logoutBtn) {
     $("synmenu").classList.remove("on");
-    $("logoutModal").classList.add("on"); // Open options modal instead of instant logout
+    $("logoutModal").classList.add("on");
   }
 
   if (pinBtn) {
@@ -232,7 +241,7 @@ document.addEventListener("click", (e) => {
         { [STORAGE_KEY]: JSON.stringify(allNotesFlat) },
         async () => {
           if ($("singlePageView").style.display === "block")
-            openSpecificPage(allNotesFlat[idx].domain);
+            openSpecificPage(allNotesFlat[idx].url);
           else loadLocalUI();
 
           if (isLoggedIn) {
@@ -266,7 +275,7 @@ document.addEventListener("click", (e) => {
     const id = delBtn.dataset.id;
     if (!confirm("Delete this note?")) return;
 
-    const domain = allNotesFlat.find((n) => n.id === id)?.domain;
+    const url = allNotesFlat.find((n) => n.id === id)?.url;
 
     allNotesFlat = allNotesFlat.filter((n) => n.id !== id);
     chrome.storage.local.set(
@@ -274,8 +283,8 @@ document.addEventListener("click", (e) => {
       async () => {
         toast("Note deleted");
 
-        if ($("singlePageView").style.display === "block" && domain)
-          openSpecificPage(domain);
+        if ($("singlePageView").style.display === "block" && url)
+          openSpecificPage(url);
         else loadLocalUI();
 
         if (isLoggedIn) {
@@ -310,7 +319,7 @@ E($("saveEdit"), "click", async () => {
     allNotesFlat[idx].title = titleVal;
     allNotesFlat[idx].content = contentVal;
     const savedId = eId;
-    const domain = allNotesFlat[idx].domain;
+    const url = allNotesFlat[idx].url;
 
     chrome.storage.local.set(
       { [STORAGE_KEY]: JSON.stringify(allNotesFlat) },
@@ -319,7 +328,7 @@ E($("saveEdit"), "click", async () => {
         toast("Saved ✓");
 
         if ($("singlePageView").style.display === "block")
-          openSpecificPage(domain);
+          openSpecificPage(url);
         else loadLocalUI();
 
         if (isLoggedIn) {
@@ -376,20 +385,24 @@ E($("search"), "input", () => {
   $("nores")?.classList.toggle("on", vis === 0 && q.length > 0);
 });
 
+// --- GROUP BY URL INSTEAD OF DOMAIN ---
 function loadLocalUI() {
   chrome.storage.local.get(STORAGE_KEY, (res) => {
     allNotesFlat = res[STORAGE_KEY] ? JSON.parse(res[STORAGE_KEY]) : [];
+
     const grouped = {};
     allNotesFlat.forEach((n) => {
-      if (!grouped[n.domain])
-        grouped[n.domain] = { domain: n.domain, url: n.url, notes: [] };
-      grouped[n.domain].notes.push(n);
+      // Grouping by Exact Webpage URL
+      if (!grouped[n.url])
+        grouped[n.url] = { domain: n.domain, url: n.url, notes: [] };
+      grouped[n.url].notes.push(n);
     });
+
     render(Object.values(grouped));
   });
 }
 
-// --- SYNC ENGINE ---
+// SYNC ENGINE & LOGOUT
 async function checkAuthAndSync() {
   try {
     const res = await fetch(`${API_BASE}/api/me`, { credentials: "include" });
@@ -398,7 +411,6 @@ async function checkAuthAndSync() {
       isLoggedIn = true;
       $("uStatus").textContent = `✓ Synced as ${user.email}`;
 
-      // Inject Logout Button
       $("loginBtn").outerHTML =
         `<div class="sitem danger" id="logoutBtn">🚪 Logout</div>`;
 
@@ -447,10 +459,9 @@ async function checkAuthAndSync() {
   }
 }
 
-// Intercept Login Click to show Guide Modal
 E($("loginBtn"), "click", () => {
   $("synmenu").classList.remove("on");
-  $("proceedLoginBtn").style.display = "block"; // Show the login button in modal
+  $("proceedLoginBtn").style.display = "block";
   $("guideModal").classList.add("on");
 });
 

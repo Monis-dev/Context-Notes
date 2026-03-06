@@ -17,6 +17,21 @@
   "action": {
     "default_popup": "popup.html"
   },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "commands": {
+    "save-highlight-shortcut": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Save selected text as a ContextNote highlight"
+    }
+  },
   "web_accessible_resources": [
     {
       "resources": ["dashboard.html"],

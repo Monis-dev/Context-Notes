@@ -1,6 +1,33 @@
 const STORAGE_KEY = "context_notes_data";
+const SETTINGS_KEY = "cn_show_highlights"; // <-- THIS WAS MISSING!
 
-// 1. Pop Out Button (FIXED)
+const toggleEl = document.getElementById("highlightToggle");
+
+// Load the current setting (default is true)
+if (toggleEl) {
+  chrome.storage.local.get(SETTINGS_KEY, (res) => {
+    toggleEl.checked = res[SETTINGS_KEY] !== false;
+  });
+
+  // When user clicks the toggle
+  toggleEl.addEventListener("change", async () => {
+    const isEnabled = toggleEl.checked;
+    await chrome.storage.local.set({ [SETTINGS_KEY]: isEnabled });
+
+    // Tell the active tab to immediately show/hide highlights
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    if (tab) {
+      chrome.tabs.sendMessage(tab.id, {
+        action: isEnabled ? "refresh_highlights" : "remove_highlights",
+      });
+    }
+  });
+}
+
+// 1. Pop Out Button
 document.getElementById("popOutBtn").addEventListener("click", () => {
   chrome.windows.create(
     {
@@ -15,10 +42,12 @@ document.getElementById("popOutBtn").addEventListener("click", () => {
   );
 });
 
+// 2. Open Dashboard
 document.getElementById("openDashboard").addEventListener("click", () => {
   chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
 });
 
+// 3. Save Note Locally
 document.getElementById("saveBtn").addEventListener("click", async () => {
   const noteTitleInput = document.getElementById("noteTitle");
   const noteInput = document.getElementById("noteInput");
@@ -35,7 +64,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     title: title,
     content: content,
     selection: "",
-    pinned: false, // New attribute
+    pinned: false,
   };
 
   const result = await chrome.storage.local.get(STORAGE_KEY);
@@ -48,6 +77,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
   window.location.reload();
 });
 
+// 4. Initial Load
 window.onload = async () => {
   const notesList = document.getElementById("notesList");
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
