@@ -97,6 +97,20 @@ const card = (n, dom) => {
   const pinColor = n.pinned ? "#f59e0b" : "currentColor";
   const pinFill = n.pinned ? "#f59e0b" : "none";
 
+  // --- FIX: Declare mediaHtml here ---
+  let mediaHtml = "";
+
+  // Badge for Timestamp
+  if (n.timestamp) {
+    mediaHtml += `<div style="font-size:11px; background:#eef2ff; color:#4f46e5; padding:2px 6px; border-radius:4px; display:inline-block; margin-bottom:6px; margin-right:4px; border:1px solid #c7d2fe;">⏱️ ${n.timestamp}</div>`;
+  }
+  // Image Preview
+  if (n.image_data) {
+    mediaHtml += `<div style="margin-top:8px; border-radius:6px; overflow:hidden; border:1px solid #e2e8f0; cursor:pointer;" onclick="window.open('${n.image_data}')">
+      <img src="${n.image_data}" style="width:100%; height:auto; display:block;" title="Click to view full size">
+    </div>`;
+  }
+
   return `<div class="card" data-id="${n.id}" data-t="${esc(searchStr)}">
     <div class="ca">
       <button class="act btn-pin" title="Pin Note" data-id="${n.id}">
@@ -110,6 +124,7 @@ const card = (n, dom) => {
       </button>
     </div>
     <div class="ct">${esc(title)}</div>
+    ${mediaHtml}
     ${sel ? `<div class="chi">"${esc(sel)}"</div>` : ""}
     ${body ? `<div class="cb">${esc(body)}</div>` : ""}
     <div class="ctags"><span class="tag">${esc(dom.slice(0, 22))}</span></div>
@@ -191,36 +206,6 @@ function render(groupedData) {
       .join("");
 
   bindNav();
-}
-
-// --- SPECIFIC WEBPAGE VIEW LOGIC ---
-function openSpecificPage(targetUrl) {
-  $("main").style.display = "none";
-  $("singlePageView").style.display = "block";
-
-  const siteNotes = allNotesFlat.filter((n) => n.url === targetUrl);
-  siteNotes.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
-
-  const cleanUrl = targetUrl.replace(/^https?:\/\/(www\.)?/, "");
-
-  $("singlePageView").innerHTML = `
-    <button class="back-btn" id="backToDash">
-      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      Back to Dashboard
-    </button>
-    <div class="mh" style="margin-bottom: 24px; font-size: 18px; word-break: break-all;">
-      <a href="${esc(targetUrl)}" target="_blank" style="color:inherit; text-decoration:none;">${esc(cleanUrl)} ↗</a>
-    </div>
-    <div class="grid wrap">
-      ${siteNotes.map((n) => card(n, siteNotes[0].domain)).join("")}
-    </div>
-  `;
-
-  E($("backToDash"), "click", () => {
-    $("singlePageView").style.display = "none";
-    $("main").style.display = "block";
-    loadLocalUI();
-  });
 }
 
 // --- GLOBAL EVENT DELEGATION ---
@@ -422,6 +407,34 @@ if (typeof chrome !== "undefined" && chrome.storage) {
   });
 }
 
+// Paywall Actions
+E($("paywallLogoutBtn"), "click", async () => {
+  await fetch(`${API_BASE}/api/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  window.location.reload();
+});
+
+E($("upgradeBtn"), "click", async () => {
+  // Simulate Payment Process
+  const btn = $("upgradeBtn");
+  btn.textContent = "Processing Payment...";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/upgrade`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (res.ok) {
+      btn.textContent = "Success! Reloading...";
+      setTimeout(() => window.location.reload(), 1500);
+    }
+  } catch (e) {
+    btn.textContent = "Payment Failed";
+  }
+});
+
 // SYNC ENGINE & LOGOUT
 let isCheckingAuth = false;
 let initialLoadDone = false; // Prevents reloading the DOM repeatedly on failures
@@ -435,11 +448,19 @@ async function checkAuthAndSync() {
     if (res.ok) {
       const user = await res.json();
       isLoggedIn = true;
-      $("uStatus").textContent = `✓ Synced as ${user.email}`;
-
-      if ($("loginBtn")) {
+      const planName = user.is_pro ? "Pro Plan" : "Free Plan";
+      const statusColor = user.is_pro ? "#4f46e5" : "#64748b";
+      $("uStatus").innerHTML =
+        `<span style="color:${statusColor}; font-weight:bold;">${planName}</span> • ${user.email}`;
+      if ($("loginBtn"))
         $("loginBtn").outerHTML =
           `<div class="sitem danger" id="logoutBtn">🚪 Logout</div>`;
+
+      // 🛑 PAYWALL CHECK 🛑
+      if (!user.is_pro) {
+        if ($("paywallModal")) $("paywallModal").classList.add("on");
+        loadLocalUI();
+        return;
       }
 
       chrome.storage.local.get(STORAGE_KEY, async (localRes) => {
@@ -456,48 +477,41 @@ async function checkAuthAndSync() {
             });
           } catch (e) {}
         }
-
         const cloudRes = await fetch(`${API_BASE}/api/notes`, {
           credentials: "include",
         });
-        const cloudData = await cloudRes.json();
-        let flattenedCloudNotes = [];
-        cloudData.forEach((site) =>
-          site.notes.forEach((n) => {
-            flattenedCloudNotes.push({
-              id: n.id,
-              url: site.url,
-              domain: site.domain,
-              title: n.title,
-              content: n.content,
-              selection: n.selection,
-              pinned: n.pinned,
-            });
-          }),
-        );
-        chrome.storage.local.set(
-          { [STORAGE_KEY]: JSON.stringify(flattenedCloudNotes) },
-          () => {
-            loadLocalUI(); // Always load local UI if we successfully pulled cloud updates
-            initialLoadDone = true;
-          },
-        );
+        if (cloudRes.ok) {
+          const cloudData = await cloudRes.json();
+          let flattenedCloudNotes = [];
+          cloudData.forEach((site) =>
+            site.notes.forEach((n) => {
+              flattenedCloudNotes.push({
+                id: n.id,
+                url: site.url,
+                domain: site.domain,
+                title: n.title,
+                content: n.content,
+                selection: n.selection,
+                pinned: n.pinned,
+                timestamp: n.timestamp,
+                image_data: n.image_data,
+              });
+            }),
+          );
+          chrome.storage.local.set(
+            { [STORAGE_KEY]: JSON.stringify(flattenedCloudNotes) },
+            loadLocalUI,
+          );
+        }
       });
     } else {
       $("uStatus").textContent = "Local Mode Only";
-      if (!initialLoadDone) {
-        loadLocalUI();
-        initialLoadDone = true;
-      }
+      loadLocalUI();
     }
   } catch (e) {
     $("uStatus").textContent = "Offline / Server Unreachable";
-    if (!initialLoadDone) {
-      loadLocalUI();
-      initialLoadDone = true;
-    }
+    loadLocalUI();
   } finally {
-    // Cooldown prevents fetching repeatedly when swapping tabs
     setTimeout(() => {
       isCheckingAuth = false;
     }, 4000);
@@ -509,11 +523,45 @@ E($("loginBtn"), "click", () => {
   $("proceedLoginBtn").style.display = "block";
   $("guideModal").classList.add("on");
 });
-
 window.addEventListener("focus", () => {
   if (!isLoggedIn) checkAuthAndSync();
 });
 window.onload = checkAuthAndSync;
+
+// --- AI FEATURES ---
+function openSpecificPage(targetUrl) {
+  $("main").style.display = "none";
+  $("singlePageView").style.display = "block";
+
+  const siteNotes = allNotesFlat.filter((n) => n.url === targetUrl);
+  siteNotes.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+  const cleanUrl = targetUrl.replace(/^https?:\/\/(www\.)?/, "");
+
+  // 1. Build the HTML
+  $("singlePageView").innerHTML = `
+    <button class="back-btn" id="backToDash">← Back to Dashboard</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div class="mh" style="word-break: break-all;">${esc(cleanUrl)}</div>
+        <button class="btn pri" id="chatWithAiBtn">💬 Chat with AI</button>
+    </div>
+    <div class="grid wrap">
+      ${siteNotes.map((n) => card(n, siteNotes[0].domain)).join("")}
+    </div>
+  `;
+
+  // 2. Attach listeners AFTER the HTML is injected
+  E($("backToDash"), "click", () => {
+    $("singlePageView").style.display = "none";
+    $("main").style.display = "block";
+    loadLocalUI();
+  });
+
+  E($("chatWithAiBtn"), "click", () => {
+    $("aiModal").dataset.context = JSON.stringify(siteNotes);
+    $("aiModal").classList.add("on");
+  });
+}
 
 // ── THEME ENGINE (Moved from HTML to JS for Extensions) ──
 const THEME_KEY = "cn_theme";
@@ -559,4 +607,35 @@ document.addEventListener("click", (e) => {
   ) {
     $("themePanel").classList.remove("on");
   }
+});
+
+//AI logic
+E($("aiBtn"), "click", () => {
+  // If general chat, pass all notes or empty context
+  $("aiModal").dataset.context = JSON.stringify(allNotesFlat);
+  $("aiModal").classList.add("on");
+});
+
+E($("closeAiBtn"), "click", () => $("aiModal").classList.remove("on"));
+
+E($("aiSendBtn"), "click", async () => {
+  const input = $("aiInput");
+  const q = input.value.trim();
+  if (!q) return;
+
+  const chatBox = $("aiChatBox");
+  chatBox.innerHTML += `<div class="chat-msg chat-user">${esc(q)}</div>`;
+  input.value = "Thinking...";
+  input.disabled = true;
+
+  // Get context from the modal's dataset (set by the specific page button)
+  const contextNotes = JSON.parse($("aiModal").dataset.context || "[]");
+
+  const answer = await ProMode.aiChat(q, contextNotes);
+
+  input.value = "";
+  input.disabled = false;
+  // Use a simple parser for the AI response
+  chatBox.innerHTML += `<div class="chat-msg chat-ai">${esc(answer).replace(/\n/g, "<br>")}</div>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
 });

@@ -3,7 +3,7 @@
 const STORAGE_KEY = "context_notes_data";
 const SETTINGS_KEY = "cn_show_highlights";
 const THEME_KEY = "cn_theme";
-
+const API_BASE = "http://127.0.0.1:5000";
 // ── THEME ENGINE (Synced natively with CSS attributes) ──
 function applyThemeToPopup(theme) {
   if (theme) {
@@ -57,13 +57,17 @@ document.addEventListener("DOMContentLoaded", () => {
         width: 360,
         height: 650,
       },
-      () => window.close(),
+      (win) => {
+        // Only close original if window creation succeeded
+        if (win) window.close();
+      },
     );
   });
-
   // ── OPEN DASHBOARD ──
   document.getElementById("openDashboard").addEventListener("click", () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("dashboard/dashboard.html"),
+    });
   });
 
   // ── SAVE NOTE ──
@@ -151,10 +155,25 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.getAttribute("data-id");
         if (!confirm("Delete this note?")) return;
+
+        // 1. Remove from local storage
         allNotes = allNotes.filter((n) => n.id !== id);
         await chrome.storage.local.set({
           [STORAGE_KEY]: JSON.stringify(allNotes),
         });
+
+        // 2. Push deletion to server (only if logged in)
+        try {
+          const res = await fetch(`${API_BASE}/api/notes/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (!res.ok)
+            console.warn("Note deleted locally, but sync to cloud failed.");
+        } catch (e) {
+          console.log("Server offline, note deleted locally.");
+        }
+
         window.location.reload();
       });
     });
@@ -173,18 +192,41 @@ document.addEventListener("DOMContentLoaded", () => {
           e.target.getAttribute("data-content"),
         );
         if (newContent === null) return;
+
         const idx = allNotes.findIndex((n) => n.id === id);
         if (idx > -1) {
           allNotes[idx].title = newTitle;
           allNotes[idx].content = newContent;
+
+          // 1. Update Local Storage
           await chrome.storage.local.set({
             [STORAGE_KEY]: JSON.stringify(allNotes),
           });
+
+          // 2. NEW: Push update to server if logged in
+          try {
+            const res = await fetch(`${API_BASE}/api/notes/${id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ title: newTitle, content: newContent }),
+              credentials: "include",
+            });
+
+            if (res.ok) {
+              console.log("Cloud sync successful");
+            } else {
+              console.warn("Cloud sync failed (maybe not logged in)");
+            }
+          } catch (err) {
+            console.error("Server is offline, update saved locally only.");
+          }
+
           window.location.reload();
         }
       });
     });
   }
-
   loadPageNotes();
 });
+
+// AI Logic

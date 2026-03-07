@@ -1,10 +1,12 @@
+import os
+
 from flask import Flask, request, jsonify, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import urlparse
 from authlib.integrations.flask_client import OAuth
 from flask_cors import CORS
-import os
 from dotenv import load_dotenv
+from ai_agent import get_ai_answer, get_ai_summary
 
 load_dotenv()
 app = Flask(__name__)
@@ -20,9 +22,11 @@ CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 oauth = OAuth(app)
 
+# --- Models ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    is_pro = db.Column(db.Boolean, default=False) # DEFAULT IS NOW FALSE (FREE TIER)
     websites = db.relationship('Website', backref='user', lazy=True)
 
 class Website(db.Model):
@@ -38,11 +42,14 @@ class Note(db.Model):
     title = db.Column(db.String(255), nullable=False, default="Untitled")
     content = db.Column(db.Text, nullable=True)
     selection = db.Column(db.Text)
-    pinned = db.Column(db.Boolean, default=False) # NEW: Pinned Feature
+    pinned = db.Column(db.Boolean, default=False)
+    image_data = db.Column(db.Text, nullable=True)
+    timestamp = db.Column(db.String(20), nullable=True)
     website_id = db.Column(db.Integer, db.ForeignKey('website.id'), nullable=False)
 
 with app.app_context(): db.create_all()
 
+# --- Auth ---
 google = oauth.register(
     name='google', client_id=os.getenv("CLIENT_ID"), client_secret=os.getenv("CLIENT_SECRET"),
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
@@ -58,74 +65,138 @@ def authorize():
     user_info = token.get('userinfo')
     user = User.query.filter_by(email=user_info['email']).first()
     if not user:
-        user = User(email=user_info['email'])
+        # Create user as FREE tier by default
+        user = User(email=user_info['email'], is_pro=False) 
         db.session.add(user)
         db.session.commit()
     session['user_id'] = user.id
     session['user_email'] = user.email
     session.permanent = True
-    return """<html><body><h2 style="font-family:sans-serif; text-align:center; margin-top:50px;">Logged in successfully! ✅ <br><br> You can close this tab and return to your Dashboard.</h2><script>setTimeout(() => window.close(), 2500);</script></body></html>"""
+    return """<html><body><h2 style="text-align:center;margin-top:50px;">Logged in! ✅<br>Close this tab.</h2><script>setTimeout(()=>window.close(),2000);</script></body></html>"""
 
 @app.route('/api/me') 
 def get_me():
-    if 'user_id' in session: return jsonify({'email': session['user_email']})
+    if 'user_id' in session: 
+        user = db.session.get(User, session['user_id'])
+        return jsonify({'email': session['user_email'], 'is_pro': user.is_pro})
     return jsonify({"error": "Not logged in"}), 401
 
-@app.route('/api/logout', methods=['POST'])
+@app.route('/api/logout', methods=['POST', 'GET'])
 def logout():
     session.clear()
     return jsonify({"message": "Logged out"}), 200
 
+# --- PAYMENT SIMULATION (For Testing) ---
+@app.route('/api/upgrade', methods=['POST'])
+def upgrade_user():
+    if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
+    user = db.session.get(User, session['user_id'])
+    user.is_pro = True
+    db.session.commit()
+    return jsonify({"message": "Upgraded to Pro"}), 200
+
+# --- Sync (Pro Only Gate) ---
 @app.route('/api/sync', methods=['POST'])
 def sync_notes():
     if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
-    user_id = session['user_id']
+    
+    user = db.session.get(User, session['user_id'])
+    if not user.is_pro: return jsonify({"error": "Pro upgrade required"}), 403
+
     for note in request.json:
         local_id = str(note.get('id'))
-        existing = Note.query.join(Website).filter(Website.user_id == user_id, Note.local_id == local_id).first()
+        existing = Note.query.join(Website).filter(Website.user_id == user.id, Note.local_id == local_id).first()
         if existing: continue
-        site = Website.query.filter_by(url=note['url'], user_id=user_id).first()
+        
+        site = Website.query.filter_by(url=note['url'], user_id=user.id).first()
         if not site:
-            site = Website(url=note['url'], domain=note.get('domain', urlparse(note['url']).netloc), user_id=user_id)
+            site = Website(url=note['url'], domain=note.get('domain', urlparse(note['url']).netloc), user_id=user.id)
             db.session.add(site)
             db.session.commit()
-        db.session.add(Note(local_id=local_id, title=note.get('title', 'Untitled'), content=note.get('content', ''), selection=note.get('selection', ''), pinned=note.get('pinned', False), website_id=site.id))
+            
+        db.session.add(Note(
+            local_id=local_id, 
+            title=note.get('title', 'Untitled'), 
+            content=note.get('content', ''), 
+            selection=note.get('selection', ''), 
+            pinned=note.get('pinned', False),
+            timestamp=note.get('timestamp', ''),
+            image_data=note.get('image_data', ''),
+            website_id=site.id
+        ))
     db.session.commit()
     return jsonify({"message": "Sync complete"}), 200
 
 @app.route('/api/notes', methods=['GET'])
 def get_notes():
     if 'user_id' not in session: return jsonify([]), 401
-    user_id = session['user_id']
-    websites = Website.query.filter_by(user_id=user_id).all()
+    user = db.session.get(User, session['user_id'])
+    
+    # If they aren't pro, we shouldn't even send them data (Double security)
+    if not user.is_pro: return jsonify([]), 403 
+
+    websites = Website.query.filter_by(user_id=user.id).all()
     result = []
     for s in websites:
         result.append({
             "domain": s.domain, "url": s.url,
-            "notes": [{"id": n.local_id, "title": n.title, "content": n.content, "selection": n.selection, "pinned": n.pinned} for n in s.notes]
+            "notes": [{
+                "id": n.local_id, "title": n.title, "content": n.content, 
+                "selection": n.selection, "pinned": n.pinned,
+                "timestamp": n.timestamp, "image_data": n.image_data
+            } for n in s.notes]
         })
     return jsonify(result)
 
-@app.route('/api/notes/<string:local_id>', methods=['PUT'])
+@app.route('/api/notes/<string:local_id>', methods=['PUT']) # Must be <string:local_id>
 def update_note(local_id):
     if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
-    note = Note.query.join(Website).filter(Website.user_id == session['user_id'], Note.local_id == local_id).first()
+    
+    # Crucial: Filter by local_id (the timestamp string)
+    note = Note.query.join(Website).filter(
+        Website.user_id == session['user_id'], 
+        Note.local_id == local_id
+    ).first()
+    
     if note:
         note.title = request.json.get('title', note.title)
         note.content = request.json.get('content', note.content)
-        note.pinned = request.json.get('pinned', note.pinned)
         db.session.commit()
         return jsonify({"message": "Updated"})
-    return jsonify({"error": "Unauthorized"}), 403
+    return jsonify({"error": "Note not found"}), 404
 
 @app.route('/api/notes/<string:local_id>', methods=['DELETE'])
 def delete_note(local_id):
     if 'user_id' not in session: return jsonify({"error": "Login required"}), 401
-    note = Note.query.join(Website).filter(Website.user_id == session['user_id'], Note.local_id == local_id).first()
+    
+    # 1. Look for the note that belongs to this user AND matches the local_id string
+    note = Note.query.join(Website).filter(
+        Website.user_id == session['user_id'], 
+        Note.local_id == local_id
+    ).first()
+    
     if note:
         db.session.delete(note)
         db.session.commit()
         return '', 204
-    return jsonify({"error": "Unauthorized"}), 403
+        
+    return jsonify({"error": "Note not found or Unauthorized"}), 404
+
+@app.route('/api/ai/chat', methods=['POST'])
+def ai_chat():
+    user = db.session.get(User, session.get('user_id'))
+    if not user or not user.is_pro: return jsonify({"error": "Pro only"}), 403
+    
+    data = request.json
+    answer = get_ai_answer(data['question'], data.get('context', []))
+    return jsonify({"answer": answer})
+
+@app.route('/api/ai/summarize', methods=['POST'])
+def ai_summarize():
+    user = db.session.get(User, session.get('user_id'))
+    if not user or not user.is_pro: return jsonify({"error": "Pro only"}), 403
+    
+    summary = get_ai_summary(request.json.get('content', ''))
+    return jsonify({"summary": summary})
 
 if __name__ == '__main__': app.run(debug=True, port=5000)

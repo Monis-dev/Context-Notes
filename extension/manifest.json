@@ -15,7 +15,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
   "content_scripts": [
     {
@@ -34,7 +34,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["dashboard.html"],
+      "resources": ["dashboard/dashboard.html", "dashboard/dashboard.js", "pro.js", "ai_services.js"],
       "matches": ["<all_urls>"]
     }
   ],

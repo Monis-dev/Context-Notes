@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ContextNote | Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="tl">
+        <button class="hbtn open" id="hbtn" aria-label="Toggle sidebar">
+          <div class="hico"><span></span><span></span><span></span></div>
+        </button>
+        <div class="logo">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M9 12h6M9 16h6M7 8h10M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"
+            />
+          </svg>
+        </div>
+        <span class="lname">Context<span>Note</span></span>
+      </div>
+
+      <div class="sw">
+        <div class="sb">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            id="search"
+            placeholder="Search notes…"
+            autocomplete="off"
+          />
+          <button class="sc" id="sc">×</button>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="infoBtn" title="How your data is stored">
+          ?
+        </button>
+        <!-- Theme Picker -->
+        <div class="theme-wrap">
+          <button class="theme-btn" id="themeBtn" title="Change color theme">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2a10 10 0 0 1 0 20" />
+              <path d="M12 12a5 5 0 0 1 5-5" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+          </button>
+          <div class="theme-panel" id="themePanel">
+            <span class="theme-panel-title">Color Theme</span>
+            <div class="palette-grid">
+              <div class="palette-swatch" data-theme="indigo">
+                <div
+                  class="swatch-circle"
+                  style="background: linear-gradient(135deg, #6366f1, #4f46e5)"
+                ></div>
+                <span class="swatch-label">Indigo</span>
+              </div>
+              <div class="palette-swatch" data-theme="violet">
+                <div
+                  class="swatch-circle"
+                  style="background: linear-gradient(135deg, #a78bfa, #7c3aed)"
+                ></div>
+                <span class="swatch-label">Violet</span>
+              </div>
+              <div class="palette-swatch" data-theme="emerald">
+                <div
+                  class="swatch-circle"
+                  style="background: linear-gradient(135deg, #34d399, #059669)"
+                ></div>
+                <span class="swatch-label">Emerald</span>
+              </div>
+              <div class="palette-swatch" data-theme="rose">
+                <div
+                  class="swatch-circle"
+                  style="background: linear-gradient(135deg, #fb7185, #e11d48)"
+                ></div>
+                <span class="swatch-label">Rose</span>
+              </div>
+              <div class="palette-swatch" data-theme="amber">
+                <div
+                  class="swatch-circle"
+                  style="background: linear-gradient(135deg, #fbbf24, #d97706)"
+                ></div>
+                <span class="swatch-label">Amber</span>
+              </div>
+              <div class="palette-swatch" data-theme="slate">
+                <div
+                  class="swatch-circle"
+                  style="
+                    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+                    border-color: #334155;
+                  "
+                ></div>
+                <span class="swatch-label">Dark</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="synw">
+          <button class="synbtn" id="synbtn">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span>Account</span>
+          </button>
+          <div class="synmenu" id="synmenu">
+            <div id="uStatus">Local Mode Only</div>
+            <div class="sdiv"></div>
+            <div class="sitem" id="loginBtn">🔑 Sync via Google</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="ovl" id="ovl"></div>
+
+    <div class="body">
+      <nav class="side" id="side">
+        <div class="shd">
+          <span class="slbl">Sources</span>
+          <div class="smeta" id="smeta">Loading…</div>
+        </div>
+        <div class="sscroll" id="snav"></div>
+      </nav>
+
+      <main class="main" id="main">
+        <div id="skel">
+          <div
+            class="sk"
+            style="height: 26px; width: 160px; margin-bottom: 8px"
+          ></div>
+          <div
+            class="sk"
+            style="height: 16px; width: 100px; margin-bottom: 28px"
+          ></div>
+        </div>
+      </main>
+      <main class="main" id="singlePageView" style="display: none"></main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="mbg" id="modal">
+      <div class="modal">
+        <h3>Edit Note</h3>
+        <input type="text" id="etitle" placeholder="Heading..." />
+        <textarea id="eta" rows="5" placeholder="Description..."></textarea>
+        <div class="macts">
+          <button class="btn" id="cancelEdit">Cancel</button>
+          <button class="btn pri" id="saveEdit">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Guide Modal -->
+    <div class="mbg" id="guideModal">
+      <div class="modal">
+        <h3>How ContextNote Stores Your Data</h3>
+        <div class="info-box">
+          <strong><span>🏠</span> Local by Default (Offline)</strong>
+          If you don't log in, your notes live entirely on your computer's hard
+          drive. They are fast, completely private, and available offline.
+        </div>
+        <div
+          class="info-box"
+          style="background: var(--acc-bg); border-color: var(--bdr)"
+        >
+          <strong><span>☁️</span> Cloud Sync (Cross-Device)</strong>
+          Logging in backs up your notes to our cloud servers so you can view
+          them on any device.
+        </div>
+        <div
+          class="info-box"
+          style="
+            background: var(--hbg);
+            border-color: var(--hbdr);
+            color: #92400e;
+          "
+        >
+          <strong><span>⚠️</span> Important Warning</strong>
+          ContextNote uses free cloud hosting. In rare cases, cloud backups
+          might be lost. <b>Your local device is your safest primary backup!</b>
+        </div>
+        <div class="macts" id="guideActs">
+          <button class="btn" id="closeGuideBtn">Got it</button>
+          <button class="btn pri" id="proceedLoginBtn" style="display: none">
+            I understand, Login
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="mbg" id="logoutModal">
+      <div class="modal">
+        <h3>Log Out Options</h3>
+        <p
+          style="
+            font-size: 13.5px;
+            color: var(--mut);
+            margin-bottom: 20px;
+            line-height: 1.5;
+          "
+        >
+          You are about to disconnect from the cloud. What would you like to do
+          with the notes on <b>this device</b>?
+        </p>
+        <div class="macts" style="flex-direction: column; gap: 10px">
+          <button class="btn" id="cancelLogout">Cancel</button>
+          <button
+            class="btn pri"
+            id="logoutKeepBtn"
+            style="background: var(--ink); border-color: var(--ink)"
+          >
+            Log out & <b>Keep</b> Notes on this device
+          </button>
+          <button class="btn danger" id="logoutWipeBtn">
+            Log out & <b>Delete</b> Notes from this device
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="mbg"
+      id="paywallModal"
+      style="backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.8)"
+    >
+      <div
+        class="modal"
+        style="
+          text-align: center;
+          padding: 40px 30px;
+          box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <div style="font-size: 40px; margin-bottom: 10px">💎</div>
+        <h3 style="font-size: 20px; margin-bottom: 10px">
+          Upgrade to ContextNote Pro
+        </h3>
+        <p style="color: var(--mut); margin-bottom: 24px; line-height: 1.6">
+          You have successfully logged in, but your account is on the
+          <b>Free Tier</b>. <br /><br />
+          To enable <b>Cloud Sync, Screenshots, and Multi-Device Support</b>,
+          you need to upgrade.
+        </p>
+
+        <div
+          style="
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: var(--ink2);
+          "
+        >
+          ✅ Unlimited Cloud Storage<br />
+          ✅ Sync across Laptop & Desktop<br />
+          ✅ Save Screenshots & YouTube Timestamps<br />
+          ✅ AI Summarization (Coming Soon)
+        </div>
+
+        <div class="macts" style="flex-direction: column; gap: 10px">
+          <button
+            class="btn pri"
+            id="upgradeBtn"
+            style="width: 100%; padding: 12px"
+          >
+            Upgrade Now ($5/mo)
+          </button>
+          <button class="btn danger" id="paywallLogoutBtn" style="width: 100%">
+            No thanks, Log me out
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mbg" id="aiModal">
+      <div class="modal">
+        <h3>✨ AI Research Assistant</h3>
+        <!-- The ChatBox must be inside the modal -->
+        <div id="aiChatBox">
+          <div class="chat-msg chat-ai">
+            Ask me anything about your notes on this page...
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 15px">
+          <input
+            type="text"
+            id="aiInput"
+            placeholder="Ask a question..."
+            style="margin-bottom: 0"
+          />
+          <button class="btn pri" id="aiSendBtn">Send</button>
+        </div>
+
+        <div class="macts" style="margin-top: 15px">
+          <button class="btn" id="closeAiBtn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../pro.js"></script>
+    <script src="../ai_service.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
